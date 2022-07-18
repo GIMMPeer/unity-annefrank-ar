@@ -6,7 +6,6 @@ public sealed class Player : NetworkBehaviour
 {
     public static Player Instance { get; private set; }
 
-
     [field: SerializeField]
     [field: SyncVar]
     public string Username
@@ -18,6 +17,11 @@ public sealed class Player : NetworkBehaviour
     }
 
 
+
+    //Username Generation
+    private string[] adverbs = { "Big", "Small", "Sad", "Happy", "Cute" };
+    private string[] nouns = {"Red Panda", "Lemur", "Capybara", "Lion"};
+
     public override void OnStartClient()
     {
         base.OnStartClient();
@@ -27,17 +31,22 @@ public sealed class Player : NetworkBehaviour
         Instance = this;
 
         UIManager.Instance.Initialize();
+
+
+        SetUsername();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
         if (!IsOwner) return;
+    }
 
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            Username = "Player_000001";
-        }
+    public void SetUsername()
+    {
+        int adverb = Random.Range(0, adverbs.Length);
+        int noun = Random.Range(0, nouns.Length);
+
+        Username = adverbs[adverb] + " " + nouns[noun];
     }
 }
