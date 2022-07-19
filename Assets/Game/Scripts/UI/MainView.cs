@@ -36,8 +36,9 @@ public class MainView : View
 
         for (var i = 0; i <= InstanceFinder.ServerManager.Clients.Count; i++)
         {
-            var currentPlayer = InstanceFinder.ServerManager.Clients[i];
-            //Trying to get the players usernames? 
+            FishNet.Connection.NetworkConnection currentPlayer = InstanceFinder.ServerManager.Clients[i];
+            //Trying to get the players usernames?
+            playerList.text += $"\n{Player.instances[currentPlayer.ClientId]}";
         }
        
 

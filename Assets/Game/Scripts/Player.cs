@@ -7,16 +7,11 @@ public sealed class Player : NetworkBehaviour
     public static Player Instance { get; private set; }
 
     [field: SerializeField]
-    [field: SyncVar]
-    public string Username
-    {
-        get;
+    //[field: SyncVar]
+    public string Username;
 
-        [ServerRpc]
-        private set;
-    }
-
-
+    [SyncObject]
+    public readonly SyncDictionary<int, Player> instances = new SyncDictionary<int, Player>();
 
     //Username Generation
     private string[] adverbs = { "Big", "Small", "Sad", "Happy", "Cute" };
@@ -34,6 +29,7 @@ public sealed class Player : NetworkBehaviour
 
 
         SetUsername();
+        instances.Add(LocalConnection.ClientId, this);
     }
 
     // Update is called once per frame
