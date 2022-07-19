@@ -16,8 +16,14 @@ public sealed class Player : NetworkBehaviour
         private set;
     }
 
-    [SyncVar]
-    public bool isReady;
+    [field: SyncVar]
+    public bool IsReady
+    {
+        get;
+
+        [ServerRpc(RequireOwnership = false)]
+        set;
+    }
 
     /*
     [SyncObject]
@@ -25,8 +31,8 @@ public sealed class Player : NetworkBehaviour
     */
 
     //Username Generation
-    private string[] adverbs = { "Big", "Small", "Sad", "Happy", "Cute" };
-    private string[] nouns = {"Red Panda", "Lemur", "Capybara", "Lion"};
+    private string[] adjectives = { "Nefarious", "Curious", "Miniscule", "Humongous", "Cute", "Silly", "Majestic", "Indubitable", "Serendipitous", "Magnetic", "Sassy", "Brutal", "Mighty", "Suspicious", "Sneaky"};
+    private string[] nouns = { "Red Panda", "Lemur", "Capybara", "Lion", "Robin", "Tortoise", "Hummingbird", "Snake", "Chipmunk", "Squirrel", "Ferret", "Owl", "Hornbill", "Mouse", "Hampster", "Human"};
 
 
     public override void OnStartServer()
@@ -67,6 +73,24 @@ public sealed class Player : NetworkBehaviour
         base.OnStopClient();
     }
 
+
+    [Server]
+    public void StartGame()
+    {
+
+        Debug.Log("Starting Game");
+    }
+
+    [Server]
+    public void StopGame()
+    { 
+    
+    }
+
+
+
+
+
     // Update is called once per frame
     void Update()
     {
@@ -75,15 +99,15 @@ public sealed class Player : NetworkBehaviour
 
     public void SetUsername()
     {
-        int adverb = Random.Range(0, adverbs.Length);
+        int adjective = Random.Range(0, adjectives.Length);
         int noun = Random.Range(0, nouns.Length);
 
-        Username = adverbs[adverb] + " " + nouns[noun];
+        Username = adjectives[adjective] + " " + nouns[noun];
     }
 
     [ServerRpc(RequireOwnership = false)]
     public void ServerSetIsReady(bool value)
     {
-        isReady = value;
+        IsReady = value;
     }
 }

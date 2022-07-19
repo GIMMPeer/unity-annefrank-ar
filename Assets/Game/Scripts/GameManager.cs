@@ -16,7 +16,11 @@ public sealed class GameManager : NetworkBehaviour
     [SyncObject]
     public readonly SyncList<Player> players = new();
 
-    
+    [field: SerializeField]
+    [field: SyncVar]
+    public bool CanStart { get; private set; }
+
+
     // Start is called before the first frame update
 
     private void Awake()
@@ -29,7 +33,29 @@ public sealed class GameManager : NetworkBehaviour
     void Update()
     {
         if (!IsServer) return;
-        
 
+        CanStart = players.All(player => player.IsReady);
     }
+
+    [Server]
+    public void StartGame()
+    {
+        if (CanStart)
+        {
+            for (int i = 0; i < players.Count; i++)
+            {
+                players[i].StartGame();
+            }
+        }
+    }
+
+    [Server]
+    public void StopGame()
+    {
+        for (int i = 0; i < players.Count; i++)
+        {
+            players[i].StopGame();
+        }
+    }
+
 }

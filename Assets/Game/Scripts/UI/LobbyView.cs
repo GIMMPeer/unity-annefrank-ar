@@ -8,17 +8,17 @@ using System.Linq;
 using UnityEngine.UI;
 public class LobbyView : View
 {
-    [SerializeField]
-    private TextMeshProUGUI infoText;
 
     [SerializeField]
     private TextMeshProUGUI usernameText;
 
     [SerializeField]
-    private TextMeshProUGUI playerCountText;
+    private Button toggleReadyButton;
+    [SerializeField]
+    private Button startGameButton;
 
     [SerializeField]
-    private Button toggleReadyButton;
+    private TMP_Text readyButtonText;
 
     [SerializeField]
     private TextMeshProUGUI playerList;
@@ -28,7 +28,17 @@ public class LobbyView : View
     {
         base.Initialize();
 
+        toggleReadyButton.onClick.AddListener(() => Player.Instance.IsReady = !Player.Instance.IsReady);
         //Player.Instance.SetUsername();
+
+        if (InstanceFinder.IsServer)
+        { 
+            startGameButton.onClick.AddListener(() => GameManager.Instance.StartGame());
+        }
+        else 
+        {
+            startGameButton.gameObject.SetActive(false);
+        }
     }
 
     
@@ -36,33 +46,31 @@ public class LobbyView : View
     {
         if (!IsInitialized) return;
 
-        infoText.text = $"Is Server = {InstanceFinder.IsServer}, Is Client = {InstanceFinder.IsClient}, Is host = {InstanceFinder.IsHost}";
+      
 
         usernameText.text = $" Username : {Player.Instance.Username}";
 
-        
-        playerList.text = $" Players : ";
 
-        for (var i = 0; i < InstanceFinder.ServerManager.Clients.Count; i++)
+        string playerListText = "";
+
+
+        for (var i = 0; i < GameManager.Instance.players.Count; i++)
         {
-            playerList.text += GameManager.Instance.players[i].Username;
+            Player currentPlayer = GameManager.Instance.players[i];
+
+            playerListText += $"\r\n {currentPlayer.Username} (Is Ready: {currentPlayer.IsReady})" ;
         }
-       
+
+        playerList.text = playerListText;
+
+        readyButtonText.color = Player.Instance.IsReady ? Color.green : Color.red;
 
         if (InstanceFinder.IsHost)
         {
-            playerCountText.text = $"Players = {InstanceFinder.ServerManager.Clients.Count}";
-
-
-            playerCountText.gameObject.SetActive(true);
         }
-        else 
-        { 
-            playerCountText.gameObject.SetActive(false);
-        }
+        else
+        {
 
-        
-        
-        
+        }
     }
 }
