@@ -1,8 +1,12 @@
 using FishNet;
 using TMPro;
 using UnityEngine;
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
+using System.Linq;
+
 using UnityEngine.UI;
-public class MainView : View
+public class LobbyView : View
 {
     [SerializeField]
     private TextMeshProUGUI infoText;
@@ -12,6 +16,9 @@ public class MainView : View
 
     [SerializeField]
     private TextMeshProUGUI playerCountText;
+
+    [SerializeField]
+    private Button toggleReadyButton;
 
     [SerializeField]
     private TextMeshProUGUI playerList;
@@ -24,6 +31,7 @@ public class MainView : View
         //Player.Instance.SetUsername();
     }
 
+    
     private void LateUpdate()
     {
         if (!IsInitialized) return;
@@ -32,13 +40,12 @@ public class MainView : View
 
         usernameText.text = $" Username : {Player.Instance.Username}";
 
+        
         playerList.text = $" Players : ";
 
-        for (var i = 0; i <= InstanceFinder.ServerManager.Clients.Count; i++)
+        for (var i = 0; i < InstanceFinder.ServerManager.Clients.Count; i++)
         {
-            FishNet.Connection.NetworkConnection currentPlayer = InstanceFinder.ServerManager.Clients[i];
-            //Trying to get the players usernames?
-            playerList.text += $"\n{Player.instances[currentPlayer.ClientId]}";
+            playerList.text += GameManager.Instance.players[i].Username;
         }
        
 
