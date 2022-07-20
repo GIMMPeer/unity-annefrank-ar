@@ -58,7 +58,7 @@ public class LobbyView : View
         {
             Player currentPlayer = GameManager.Instance.players[i];
 
-            playerListText += $"\r\n {currentPlayer.Username} (Is Ready: {currentPlayer.IsReady})" ;
+            playerListText += $"\r\n {currentPlayer.Username} (IsReady: {currentPlayer.IsReady})" ;
         }
 
         playerList.text = playerListText;

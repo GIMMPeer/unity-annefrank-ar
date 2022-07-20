@@ -16,6 +16,16 @@ public sealed class Player : NetworkBehaviour
         private set;
     }
 
+    [field: SerializeField]
+    [field: SyncVar]
+    public int Score
+    {
+        get;
+
+        [ServerRpc]
+        private set;
+    }
+
     [field: SyncVar]
     public bool IsReady
     {
@@ -24,6 +34,53 @@ public sealed class Player : NetworkBehaviour
         [ServerRpc(RequireOwnership = false)]
         set;
     }
+
+    [field: SyncVar]
+    public bool HasVoted
+    {
+        get;
+
+        [ServerRpc(RequireOwnership = false)]
+        set;
+    }
+
+
+
+    [field: SyncVar]
+    public bool Coop
+    {
+        get;
+
+        [ServerRpc(RequireOwnership = false)]
+        set;
+    }
+    [field: SyncVar]
+    public bool Comp
+    {
+        get;
+
+        [ServerRpc(RequireOwnership = false)]
+        set;
+    }
+
+    [field: SyncVar]
+    public bool R1Start
+    {
+        get;
+
+        [ServerRpc(RequireOwnership = false)]
+        set;
+    }
+
+    [field: SyncVar]
+    public bool R1End
+    {
+        get;
+
+        [ServerRpc(RequireOwnership = false)]
+        set;
+    }
+
 
     /*
     [SyncObject]
@@ -77,8 +134,10 @@ public sealed class Player : NetworkBehaviour
     [Server]
     public void StartGame()
     {
+        if (!IsOwner) return;
+        Debug.Log("Starting Game" + this.Username);
 
-        Debug.Log("Starting Game");
+        
     }
 
     [Server]
@@ -95,6 +154,28 @@ public sealed class Player : NetworkBehaviour
     void Update()
     {
         if (!IsOwner) return;
+
+        if (R1Start == true)
+        {
+            UIManager.Instance.Show<DilemmaView>();
+
+            if (Coop == true)
+            {
+                HasVoted = true;
+                Score += 1;
+            }
+            else if (Comp == true)
+            {
+                HasVoted = true;
+                Score += 5;
+            }
+        }
+
+        if (R1End)
+        {
+            R1Start = false;
+            UIManager.Instance.Show<RoundView>();
+        }
     }
 
     public void SetUsername()

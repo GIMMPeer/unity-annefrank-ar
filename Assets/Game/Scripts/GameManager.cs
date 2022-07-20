@@ -20,7 +20,7 @@ public sealed class GameManager : NetworkBehaviour
     [field: SyncVar]
     public bool CanStart { get; private set; }
 
-
+    public bool ReadyNextRound { get; private set; }
     // Start is called before the first frame update
 
     private void Awake()
@@ -35,6 +35,18 @@ public sealed class GameManager : NetworkBehaviour
         if (!IsServer) return;
 
         CanStart = players.All(player => player.IsReady);
+        ReadyNextRound = players.All(player => player.HasVoted);
+        if (ReadyNextRound)
+        {
+            NextRound();
+
+            for (int i = 0; i < players.Count; i++)
+            {
+                players[i].HasVoted = false;
+            }
+
+        }
+
     }
 
     [Server]
@@ -45,7 +57,17 @@ public sealed class GameManager : NetworkBehaviour
             for (int i = 0; i < players.Count; i++)
             {
                 players[i].StartGame();
+                players[i].R1Start = true;
             }
+        }
+    }
+    [Server]
+    public void NextRound()
+    {
+        for (int i = 0; i < players.Count; i++)
+        {
+            players[i].HasVoted = false;
+            players[i].R1End = true;
         }
     }
 
