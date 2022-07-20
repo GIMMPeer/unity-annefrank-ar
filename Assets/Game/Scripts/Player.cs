@@ -63,8 +63,8 @@ public sealed class Player : NetworkBehaviour
 
 
         SetUsername();
-        
-        
+
+        FindObjectOfType<TeamManager>().AddPlayer(this);
         
         //instances.Add(LocalConnection.ClientId, this);
     }
