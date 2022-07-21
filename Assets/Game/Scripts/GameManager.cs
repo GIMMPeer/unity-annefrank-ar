@@ -8,16 +8,30 @@ public sealed class GameManager : NetworkBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    private struct playerContainer
-    {
-        public string PlayerName;
-    }
 
     [SyncObject]
     public readonly SyncList<Player> players = new SyncList<Player>();
 
+    /*
     [SyncObject]
     public readonly SyncList<Group> groups = new SyncList<Group>();
+    */
+
+    private int[] groupVotes = new int[4];
+
+
+   [SyncObject]
+    public readonly SyncList<int> groupScores = new SyncList<int>();
+
+    /*
+    public int[] groupScores
+    {
+        get;
+
+        [ServerRpc(RequireOwnership = false)]
+        set;
+    } = new int[4];
+    */
 
     [field: SerializeField]
     [field: SyncVar]
@@ -26,10 +40,17 @@ public sealed class GameManager : NetworkBehaviour
     public bool ReadyNextRound { get; private set; }
     // Start is called before the first frame update
 
+    public bool r1Active { get; private set; }
+
+    private int roundNum = 0;
+
     private void Awake()
     {
         Instance = this;
-       
+        groupScores.Add(0);
+        groupScores.Add(0);
+        groupScores.Add(0);
+        groupScores.Add(0);
     }
 
     // Update is called once per frame
@@ -41,16 +62,93 @@ public sealed class GameManager : NetworkBehaviour
         ReadyNextRound = players.All(player => player.HasVoted);
         if (ReadyNextRound)
         {
-            NextRound();
 
+            CheckVotesAndAssignScore(1);
             for (int i = 0; i < players.Count; i++)
             {
                 players[i].HasVoted = false;
             }
+            NextRound();
+            
+            
         }
     }
 
 
+    [ServerRpc(RequireOwnership = false)]
+    public void CheckVotesAndAssignScore(int roundNum)
+    {
+        
+
+        print("Check Score");
+        for (var i = 0; i < players.Count; i++)
+        {
+
+            var playerGroupNum = players[i].GroupNumber;
+
+            switch (playerGroupNum)
+            {
+                case 0:
+                    groupVotes[0] += players[i].VoteStatus;
+                    Debug.Log("Group 1 Votes" + groupVotes[0]);
+                    break;
+                case 1:
+                    groupVotes[1] += players[i].VoteStatus;
+                    Debug.Log("Group 2 Votes" + groupVotes[1]);
+                    break;
+                case 2:
+                    groupVotes[2] += players[i].VoteStatus;
+                    break;
+                case 3:
+                    groupVotes[3] += players[i].VoteStatus;
+                    break;
+                default:
+                    print("ERR: Outcast");
+                    break;
+            }
+        }
+
+        switch (roundNum)
+        {
+            case 1:
+
+                
+                if (groupVotes[0] > 0 && groupVotes[1] > 0) //Compete
+                {
+                    groupScores[0] += 2;
+                    groupScores[1] += 2;
+                    Debug.Log(groupScores[0]);
+                    Debug.Log(groupScores[1]);
+                }
+                else if(groupVotes[0] < 0 && groupVotes[1] < 0) //Cooperate
+                {
+                    groupScores[0] += 1;
+                    groupScores[1] += 1;
+                    Debug.Log(groupScores[0]);
+                    Debug.Log(groupScores[1]);
+                }
+
+
+                break;
+            case 2:
+               
+                break;
+            case 3:
+                
+                break;
+            case 4:
+               
+                break;
+            default:
+                print("ERR: Outcast");
+                break;
+        }
+
+        for (int i = 0; i < players.Count; i++)
+        {
+            players[i].VoteStatus = 0;
+        }
+    }
 
 
     //public readonly SyncList<Player> players = new SyncList<Player>();
@@ -119,16 +217,20 @@ public sealed class GameManager : NetworkBehaviour
             {
                 //players[i].StartGame();
                 players[i].R1Start = true;
+                r1Active = true;
+                roundNum = 1;
             }
         }
     }
+
     [Server]
     public void NextRound()
     {
         for (int i = 0; i < players.Count; i++)
         {
-            players[i].HasVoted = false;
+
             players[i].R1End = true;
+            //roundNum += 1;
         }
     }
 

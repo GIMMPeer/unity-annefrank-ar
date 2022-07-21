@@ -10,10 +10,10 @@ public class RoundView : View
 {
 
     [SerializeField]
-    private TextMeshProUGUI leaderboardText;
+    private TextMeshProUGUI group1Score;
 
     [SerializeField]
-    private TextMeshProUGUI playerList;
+    private TextMeshProUGUI group2Score;
 
 
     public override void Initialize()
@@ -28,18 +28,13 @@ public class RoundView : View
     }
 
     // Update is called once per frame
-    void Update()
+    private void LateUpdate()
     {
-        string playerListText = "";
+        if (!IsInitialized) return;
 
-
-        for (var i = 0; i < GameManager.Instance.players.Count; i++)
-        {
-            Player currentPlayer = GameManager.Instance.players[i];
-
-            playerListText += $"\r\n {currentPlayer.Username} (Score: {currentPlayer.Score})";
-        }
-
-        playerList.text = playerListText;
+        group1Score.text = $" Group 1 Score : {GameManager.Instance.groupScores[0]}";
+        
+        group2Score.text = $" Group 2 Score : {GameManager.Instance.groupScores[1]}";
+       
     }
 }

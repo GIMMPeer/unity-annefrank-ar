@@ -23,8 +23,16 @@ public class DilemmaView : View
     {
         base.Initialize();
 
-        coopButton.onClick.AddListener(() => Player.Instance.Coop = true);
-        compButton.onClick.AddListener(() => Player.Instance.Comp = true);
+        coopButton.onClick.AddListener(() => {
+            Player.Instance.VoteStatus = -1;
+            Player.Instance.HasVoted = true;
+           
+        });
+        compButton.onClick.AddListener(() =>
+        {
+            Player.Instance.VoteStatus = 1;
+            Player.Instance.HasVoted = true;
+        });
     }
 
     public override void Show(object args = null)

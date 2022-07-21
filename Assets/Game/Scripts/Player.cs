@@ -46,6 +46,15 @@ public sealed class Player : NetworkBehaviour
         set;
     }
 
+    [field: SyncVar]
+    public bool HasVoted
+    {
+        get;
+
+        [ServerRpc(RequireOwnership = false)]
+        set;
+    }
+
 
     [field: SyncVar]
     public bool IsReady
@@ -57,30 +66,14 @@ public sealed class Player : NetworkBehaviour
     }
 
     [field: SyncVar]
-    public bool HasVoted
+    public int VoteStatus
     {
         get;
 
         [ServerRpc(RequireOwnership = false)]
         set;
     }
-
-    [field: SyncVar]
-    public bool Coop
-    {
-        get;
-
-        [ServerRpc(RequireOwnership = false)]
-        set;
-    }
-    [field: SyncVar]
-    public bool Comp
-    {
-        get;
-
-        [ServerRpc(RequireOwnership = false)]
-        set;
-    }
+  
 
     [field: SyncVar]
     public bool R1Start
@@ -180,19 +173,9 @@ public sealed class Player : NetworkBehaviour
             UIManager.Instance.Show<LobbyView>();
         }
         if (R1Start == true)
-        {
+        { 
             UIManager.Instance.Show<DilemmaView>();
 
-            if (Coop == true)
-            {
-                HasVoted = true;
-                Score += 1;
-            }
-            else if (Comp == true)
-            {
-                HasVoted = true;
-                Score += 5;
-            }
         }
 
         if (R1End)
