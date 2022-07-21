@@ -18,6 +18,17 @@ public sealed class Player : NetworkBehaviour
 
     [field: SerializeField]
     [field: SyncVar]
+    public int GroupNumber
+    {
+        get;
+
+        [ServerRpc(RequireOwnership = false)]
+        set;
+    }
+
+
+    [field: SerializeField]
+    [field: SyncVar]
     public int Score
     {
         get;

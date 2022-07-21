@@ -14,7 +14,10 @@ public sealed class GameManager : NetworkBehaviour
     }
 
     [SyncObject]
-    public readonly SyncList<Player> players = new();
+    public readonly SyncList<Player> players = new SyncList<Player>();
+
+    [SyncObject]
+    public readonly SyncList<Group> groups = new SyncList<Group>();
 
     [field: SerializeField]
     [field: SyncVar]
@@ -44,20 +47,62 @@ public sealed class GameManager : NetworkBehaviour
             {
                 players[i].HasVoted = false;
             }
-
         }
-
     }
+
+
+
+
+    //public readonly SyncList<Player> players = new SyncList<Player>();
+    [Server]
+    public void CreateAndAssignGroups()
+    {
+        Debug.Log("Inside ");
+        int numGroups = 0;
+        int numPlayers = players.Count;
+        int groupNumber = 0;
+        /*
+         * Create Groups based on number of players
+         */
+        if (players.Count > 0 && players.Count <= 8)
+        {
+            numGroups = 2;
+        }
+        else if(players.Count <= 16)
+        {
+            numGroups = 4;
+        }
+        else if(players.Count <= 32)
+        {
+            numGroups = 8;
+        }
+        else
+        {
+            Debug.Log("Bad Error Message GameManager 76");
+        }
+        for(int i = 0; i < numGroups; i++)
+        {
+            groups.Add(new Group());
+        }
+        for(int i = 0; i < numPlayers; i++)
+        {
+            players[numPlayers].GroupNumber = groupNumber;
+            groupNumber++;
+            groupNumber %= numGroups;
+        }
+    }
+
 
     [Server]
     public void StartGame()
     {
+        CreateAndAssignGroups();
         if (CanStart)
         {
             for (int i = 0; i < players.Count; i++)
             {
-                players[i].StartGame();
-                players[i].R1Start = true;
+                //players[i].StartGame();
+                //players[i].R1Start = true;
             }
         }
     }
