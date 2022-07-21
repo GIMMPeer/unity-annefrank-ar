@@ -86,7 +86,7 @@ public sealed class GameManager : NetworkBehaviour
         }
         for(int i = 0; i < numPlayers; i++)
         {
-            players[numPlayers].GroupNumber = groupNumber;
+            players[i].GroupNumber = groupNumber;
             groupNumber++;
             groupNumber %= numGroups;
         }
