@@ -64,15 +64,15 @@ public sealed class GameManager : NetworkBehaviour
         /*
          * Create Groups based on number of players
          */
-        if (players.Count > 0 && players.Count <= 8)
+        if (numPlayers > 0 && numPlayers <= 8)
         {
             numGroups = 2;
         }
-        else if(players.Count <= 16)
+        else if(numPlayers <= 16)
         {
             numGroups = 4;
         }
-        else if(players.Count <= 32)
+        else if(numPlayers <= 32)
         {
             numGroups = 8;
         }
@@ -80,29 +80,45 @@ public sealed class GameManager : NetworkBehaviour
         {
             Debug.Log("Bad Error Message GameManager 76");
         }
+        /*
         for(int i = 0; i < numGroups; i++)
         {
             groups.Add(new Group());
         }
+        */
         for(int i = 0; i < numPlayers; i++)
         {
-            players[numPlayers].GroupNumber = groupNumber;
+            if (groupNumber == numGroups + 1)
+            {
+                groupNumber = 0;
+            }
+
+            players[i].GroupNumber = groupNumber;
             groupNumber++;
-            groupNumber %= numGroups;
+            
         }
+        ShowLobbyView();
     }
 
+    [Server]
+    public void ShowLobbyView()
+    {
+        for (int i = 0; i < players.Count; i++)
+        {
+            players[i].ShowLobby = true;
+        }
+    }
 
     [Server]
     public void StartGame()
     {
-        CreateAndAssignGroups();
+        
         if (CanStart)
         {
             for (int i = 0; i < players.Count; i++)
             {
                 //players[i].StartGame();
-                //players[i].R1Start = true;
+                players[i].R1Start = true;
             }
         }
     }

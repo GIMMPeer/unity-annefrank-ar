@@ -38,6 +38,16 @@ public sealed class Player : NetworkBehaviour
     }
 
     [field: SyncVar]
+    public bool ShowLobby
+    {
+        get;
+
+        [ServerRpc(RequireOwnership = false)]
+        set;
+    }
+
+
+    [field: SyncVar]
     public bool IsReady
     {
         get;
@@ -54,8 +64,6 @@ public sealed class Player : NetworkBehaviour
         [ServerRpc(RequireOwnership = false)]
         set;
     }
-
-
 
     [field: SyncVar]
     public bool Coop
@@ -166,6 +174,11 @@ public sealed class Player : NetworkBehaviour
     {
         if (!IsOwner) return;
 
+
+        if (ShowLobby == true)
+        {
+            UIManager.Instance.Show<LobbyView>();
+        }
         if (R1Start == true)
         {
             UIManager.Instance.Show<DilemmaView>();
