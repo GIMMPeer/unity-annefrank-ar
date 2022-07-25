@@ -53,7 +53,7 @@ public sealed class Player : NetworkBehaviour
 
         [ServerRpc(RequireOwnership = false)]
         set;
-    }
+    } = false;
 
 
     [field: SyncVar]
