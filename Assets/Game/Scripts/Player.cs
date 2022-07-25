@@ -84,7 +84,7 @@ public sealed class Player : NetworkBehaviour
 
     //Username Generation
     private string[] adjectives = { "Nefarious", "Curious", "Miniscule", "Humongous", "Cute", "Silly", "Majestic", "Indubitable", "Serendipitous", "Magnetic", "Sassy", "Brutal", "Mighty", "Suspicious", "Sneaky", "Hairy"};
-    private string[] nouns = { "Red Panda", "Lemur", "Capybara", "Lion", "Robin", "Tortoise", "Hummingbird", "Snake", "Chipmunk", "Squirrel", "Ferret", "Owl", "Hornbill", "Mouse", "Hampster", "Human", "Dolphin"};
+    private string[] nouns = { "Red Panda", "Lemur", "Capybara", "Lion", "Robin", "Tortoise", "Hummingbird", "Snake", "Chipmunk", "Squirrel", "Ferret", "Owl", "Hornbill", "Mouse", "Hampster", "Human", "Dolphin", "Duck", "Fish"};
 
 
     public override void OnStartServer()
@@ -168,7 +168,14 @@ public sealed class Player : NetworkBehaviour
                 UIManager.Instance.Show<RoundView>();
                 break;
             case 4:
-                UIManager.Instance.Show<DilemmaView2>();
+                if (GroupNumber != GameManager.Instance.highestGroup)
+                {
+                    UIManager.Instance.Show<DilemmaView2>();
+                }
+                else
+                {
+                    UIManager.Instance.Show<AttackedView>();
+                }
                 break;
             case 5:
                 UIManager.Instance.Show<RoundView2>();

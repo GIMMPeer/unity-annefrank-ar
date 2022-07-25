@@ -102,33 +102,22 @@ public sealed class GameManager : NetworkBehaviour
                 break;
 
             case 2:
-                if (groupVotes[0] >= 0 && groupVotes[1] >= 0) //Compete
+
+                for (int i = 0; i < numGroups; i ++)
                 {
-                    groupScores[0] += 2;
-                    groupScores[1] += 2;
-                    Debug.Log(groupScores[0]);
-                    Debug.Log(groupScores[1]);
-                }
-                else if (groupVotes[0] < 0 && groupVotes[1] < 0) //Cooperate
-                {
-                    groupScores[0] += 1;
-                    groupScores[1] += 1;
-                    Debug.Log(groupScores[0]);
-                    Debug.Log(groupScores[1]);
-                }
-                else if (groupVotes[0] < 0 && groupVotes[1] > 0)
-                {
-                    groupScores[0] += 1;
-                    groupScores[1] += 4;
-                }
-                else if (groupVotes[0] > 0 && groupVotes[1] < 0)
-                {
-                    groupScores[0] += 4;
-                    groupScores[1] += 1;
-                }
-                else
-                {
-                    Debug.Log("Error");
+
+                    if (i == highestGroup)
+                    {
+                        groupScores[i] -= 1;
+                    }
+                    else if (groupVotes[i] >= 0)
+                    {
+                        groupScores[i] += 10;
+                    }
+                    else if (groupVotes[i] < 0)
+                    {
+                        Debug.Log("Do nothing");
+                    }
                 }
                 break;
             case 3:
@@ -150,16 +139,18 @@ public sealed class GameManager : NetworkBehaviour
         highestGroup = -1;
         Debug.Log("list count: " + groupScores.Count);
 
+        Debug.Log("Score list: " + groupScores);
         for (int i = 0; i < groupScores.Count; i++)
         {
+            //print("Score: " + groupScores[i]);
             if (groupScores[i] > highestScore)
             {
                 highestScore = groupScores[i];
                 highestGroup = i;
             }
-
+            
         }
-        print("Highest group: " + highestGroup);
+        //print("Highest group: " + highestGroup);
     }
         
 
@@ -245,7 +236,11 @@ public sealed class GameManager : NetworkBehaviour
                 CheckVotes(players[i]);
             }
         AssignScores();
-        CheckHighest();
+        if (viewNum == 2)
+        {
+         CheckHighest();
+        }
+        
         viewNum += 1;
         ResetAll();
 
