@@ -21,7 +21,18 @@ public class LobbyView : View
     private TMP_Text readyButtonText;
 
     [SerializeField]
-    private TextMeshProUGUI playerList;
+    private TextMeshProUGUI teamOneList;
+
+    [SerializeField]
+    private TextMeshProUGUI teamTwoList;
+
+    [SerializeField]
+    private TextMeshProUGUI teamThreeList;
+
+    [SerializeField]
+    private TextMeshProUGUI teamFourList;
+
+  
 
 
     public override void Initialize()
@@ -51,26 +62,40 @@ public class LobbyView : View
         usernameText.text = $" Username : {Player.Instance.Username}";
 
 
-        string playerListText = "";
-
+        string teamOne = "";
+        string teamTwo = "";
+        string teamThree = "";
+        string teamFour = "";
 
         for (var i = 0; i < GameManager.Instance.players.Count; i++)
         {
             Player currentPlayer = GameManager.Instance.players[i];
 
-            playerListText += $"\r\n {currentPlayer.Username} (IsReady: {currentPlayer.IsReady}) (groupNumber: {currentPlayer.GroupNumber}" ;
-        }
+            if (currentPlayer.GroupNumber == 0)
+            {
+                teamOne += $"\r\n {currentPlayer.Username}";
+            }
+            if (currentPlayer.GroupNumber == 1)
+            {
+                teamTwo += $"\r\n {currentPlayer.Username}";
+            }
+            if (currentPlayer.GroupNumber == 2)
+            {
+                teamThree += $"\r\n {currentPlayer.Username}";
+            }
+            if (currentPlayer.GroupNumber == 3)
+            {
+                teamFour += $"\r\n {currentPlayer.Username}";
+            }
 
-        playerList.text = playerListText;
+        }
+        teamOneList.text = teamOne;
+        teamTwoList.text = teamTwo;
+        teamThreeList.text = teamThree;
+        teamFourList.text = teamFour;
 
         readyButtonText.color = Player.Instance.IsReady ? Color.green : Color.red;
 
-        if (InstanceFinder.IsHost)
-        {
-        }
-        else
-        {
-
-        }
+       
     }
 }
