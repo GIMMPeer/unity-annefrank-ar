@@ -26,12 +26,13 @@ public class DilemmaView : View
         coopButton.onClick.AddListener(() => {
             Player.Instance.VoteStatus = -1;
             Player.Instance.HasVoted = true;
-           
+            GameManager.Instance.ReadyCheck();
         });
         compButton.onClick.AddListener(() =>
         {
             Player.Instance.VoteStatus = 1;
             Player.Instance.HasVoted = true;
+            GameManager.Instance.ReadyCheck();
         });
     }
 

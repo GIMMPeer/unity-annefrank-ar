@@ -20,18 +20,9 @@ public sealed class GameManager : NetworkBehaviour
     private int[] groupVotes = new int[4];
 
 
-   [SyncObject]
+    [SyncObject]
     public readonly SyncList<int> groupScores = new SyncList<int>();
 
-    /*
-    public int[] groupScores
-    {
-        get;
-
-        [ServerRpc(RequireOwnership = false)]
-        set;
-    } = new int[4];
-    */
 
     [field: SerializeField]
     [field: SyncVar]
@@ -54,23 +45,28 @@ public sealed class GameManager : NetworkBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (!IsServer) return;
 
         CanStart = players.All(player => player.IsReady);
+        
+    
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void ReadyCheck()
+    {
         ReadyNextRound = players.All(player => player.HasVoted);
         if (ReadyNextRound)
         {
-
-            CheckVotesAndAssignScore(1);
             for (int i = 0; i < players.Count; i++)
             {
                 players[i].HasVoted = false;
             }
+
+            CheckVotesAndAssignScore(1);
             NextRound();
-            
-            
         }
     }
 
@@ -113,7 +109,7 @@ public sealed class GameManager : NetworkBehaviour
             case 1:
 
                 
-                if (groupVotes[0] > 0 && groupVotes[1] > 0) //Compete
+                if (groupVotes[0] >= 0 && groupVotes[1] >=  0) //Compete
                 {
                     groupScores[0] += 2;
                     groupScores[1] += 2;
@@ -176,7 +172,7 @@ public sealed class GameManager : NetworkBehaviour
         }
         else
         {
-            Debug.Log("Bad Error Message GameManager 76");
+            Debug.Log("Bad Error Message GameManager 179");
         }
         /*
         for(int i = 0; i < numGroups; i++)
@@ -186,14 +182,13 @@ public sealed class GameManager : NetworkBehaviour
         */
         for(int i = 0; i < numPlayers; i++)
         {
-            if (groupNumber == numGroups + 1)
+            if (groupNumber == numGroups)
             {
                 groupNumber = 0;
             }
 
             players[i].GroupNumber = groupNumber;
             groupNumber++;
-            
         }
         ShowLobbyView();
     }
