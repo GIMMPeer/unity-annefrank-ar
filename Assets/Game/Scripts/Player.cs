@@ -75,24 +75,7 @@ public sealed class Player : NetworkBehaviour
     }
   
 
-    [field: SyncVar]
-    public bool R1Start
-    {
-        get;
-
-        [ServerRpc(RequireOwnership = false)]
-        set;
-    }
-
-    [field: SyncVar]
-    public bool R1End
-    {
-        get;
-
-        [ServerRpc(RequireOwnership = false)]
-        set;
-    }
-
+  
 
     /*
     [SyncObject]
@@ -168,23 +151,40 @@ public sealed class Player : NetworkBehaviour
         if (!IsOwner) return;
 
 
-        if (ShowLobby == true)
+        switch (GameManager.Instance.viewNum)
         {
-            UIManager.Instance.Show<LobbyView>();
+            case 0:
+                
+                break;
+            case 1:
+                UIManager.Instance.Show<LobbyView>();
+               
+                break;
+            case 2:
+                UIManager.Instance.Show<DilemmaView>();
+                
+                break;
+            case 3:
+                UIManager.Instance.Show<RoundView>();
+                break;
+            case 4:
+                UIManager.Instance.Show<DilemmaView2>();
+                break;
+            case 5:
+                UIManager.Instance.Show<RoundView2>();
+                break;
         }
-        if (R1Start == true)
-        { 
-            UIManager.Instance.Show<DilemmaView>();
+        
+        
+       
 
-        }
-
-        if (R1End)
-        {
-            R1Start = false;
-            UIManager.Instance.Show<RoundView>();
-        }
+       
     }
 
+    public void LoadView<V>() where V : View
+    {
+        UIManager.Instance.Show<V>();
+    }
     public void SetUsername()
     {
         int adjective = Random.Range(0, adjectives.Length);

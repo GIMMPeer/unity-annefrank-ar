@@ -32,7 +32,8 @@ public class LobbyView : View
     [SerializeField]
     private TextMeshProUGUI teamFourList;
 
-  
+    [SerializeField]
+    private TextMeshProUGUI[] teamTitles;
 
 
     public override void Initialize()
@@ -44,7 +45,7 @@ public class LobbyView : View
 
         if (InstanceFinder.IsServer)
         { 
-            startGameButton.onClick.AddListener(() => GameManager.Instance.StartGame());
+            startGameButton.onClick.AddListener(() => GameManager.Instance.ReadyCheck());
         }
         else 
         {
@@ -88,6 +89,17 @@ public class LobbyView : View
                 teamFour += $"\r\n {currentPlayer.Username}";
             }
 
+        }
+
+        /*
+        if (GameManager.Instance.numGroups = 2)
+        {
+            teamOneTitle.setactive(false);
+        }
+        */
+        for (int i = 0; i < GameManager.Instance.numGroups; i++)
+        {
+            teamTitles[i].gameObject.SetActive(true);
         }
         teamOneList.text = teamOne;
         teamTwoList.text = teamTwo;

@@ -28,123 +28,141 @@ public sealed class GameManager : NetworkBehaviour
     [field: SyncVar]
     public bool CanStart { get; private set; }
 
-    public bool ReadyNextRound { get; private set; }
-    // Start is called before the first frame update
+    
+    [field: SyncVar]
+    public int highestGroup { get; private set; }
 
     public bool r1Active { get; private set; }
 
-    private int roundNum = 0;
+    [field: SyncVar]
+    public int roundNum { get; private set; } = 0;
+
+    [field: SyncVar]
+    public int viewNum { get; private set; } = 0;
+
+    [field: SyncVar]
+    public int numGroups { get; private set; }
+
+    //[field: SyncVar]
+    //public int highestGroup { get; private set; }
 
     private void Awake()
     {
         Instance = this;
-        groupScores.Add(0);
-        groupScores.Add(0);
-        groupScores.Add(0);
-        groupScores.Add(0);
-    }
-
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-        if (!IsServer) return;
-
-        CanStart = players.All(player => player.IsReady);
-        
-    
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void ReadyCheck()
+    public void CheckVotes(Player player)
     {
-        ReadyNextRound = players.All(player => player.HasVoted);
-        if (ReadyNextRound)
-        {
-            for (int i = 0; i < players.Count; i++)
-            {
-                players[i].HasVoted = false;
-            }
 
-            CheckVotesAndAssignScore(1);
-            NextRound();
-        }
+        var playerGroupNum = player.GroupNumber;
+        groupVotes[playerGroupNum] += player.VoteStatus;
+        Debug.Log("Group 1 Votes" + groupVotes[playerGroupNum]);
+
     }
 
-
     [ServerRpc(RequireOwnership = false)]
-    public void CheckVotesAndAssignScore(int roundNum)
+    public void AssignScores()
     {
-        
-
-        print("Check Score");
-        for (var i = 0; i < players.Count; i++)
-        {
-
-            var playerGroupNum = players[i].GroupNumber;
-
-            switch (playerGroupNum)
-            {
-                case 0:
-                    groupVotes[0] += players[i].VoteStatus;
-                    Debug.Log("Group 1 Votes" + groupVotes[0]);
-                    break;
-                case 1:
-                    groupVotes[1] += players[i].VoteStatus;
-                    Debug.Log("Group 2 Votes" + groupVotes[1]);
-                    break;
-                case 2:
-                    groupVotes[2] += players[i].VoteStatus;
-                    break;
-                case 3:
-                    groupVotes[3] += players[i].VoteStatus;
-                    break;
-                default:
-                    print("ERR: Outcast");
-                    break;
-            }
-        }
-
         switch (roundNum)
         {
             case 1:
+                for (int i = 0; i < numGroups; i += 2)
+                {
+                    if (groupVotes[i] >= 0 && groupVotes[i + 1] >= 0) //Compete
+                    {
+                        groupScores[i] += 2;
+                        groupScores[i + 1] += 2;
+                        Debug.Log(groupScores[i]);
+                        Debug.Log(groupScores[i + 1]);
+                    }
+                    else if (groupVotes[i] < 0 && groupVotes[i + 1] < 0) //Cooperate
+                    {
+                        groupScores[i] += 1;
+                        groupScores[i + 1] += 1;
+                        Debug.Log(groupScores[i]);
+                        Debug.Log(groupScores[i + 1]);
+                    }
+                    else if (groupVotes[i] < 0 && groupVotes[i + 1] > 0)//higher team comp
+                    {
+                        groupScores[i] += 1;
+                        groupScores[i + 1] += 4;
+                    }
+                    else if (groupVotes[i] > 0 && groupVotes[i + 1] < 0)//lower team comp
+                    {
+                        groupScores[i] += 4;
+                        groupScores[i + 1] += 1;
+                    }
+                    else
+                    {
+                        Debug.Log("Error");
+                    }
+                }
 
-                
-                if (groupVotes[0] >= 0 && groupVotes[1] >=  0) //Compete
+                break;
+
+            case 2:
+                if (groupVotes[0] >= 0 && groupVotes[1] >= 0) //Compete
                 {
                     groupScores[0] += 2;
                     groupScores[1] += 2;
                     Debug.Log(groupScores[0]);
                     Debug.Log(groupScores[1]);
                 }
-                else if(groupVotes[0] < 0 && groupVotes[1] < 0) //Cooperate
+                else if (groupVotes[0] < 0 && groupVotes[1] < 0) //Cooperate
                 {
                     groupScores[0] += 1;
                     groupScores[1] += 1;
                     Debug.Log(groupScores[0]);
                     Debug.Log(groupScores[1]);
                 }
-
-
-                break;
-            case 2:
-               
+                else if (groupVotes[0] < 0 && groupVotes[1] > 0)
+                {
+                    groupScores[0] += 1;
+                    groupScores[1] += 4;
+                }
+                else if (groupVotes[0] > 0 && groupVotes[1] < 0)
+                {
+                    groupScores[0] += 4;
+                    groupScores[1] += 1;
+                }
+                else
+                {
+                    Debug.Log("Error");
+                }
                 break;
             case 3:
-                
+
                 break;
             case 4:
-               
+
                 break;
             default:
                 print("ERR: Outcast");
                 break;
         }
-
-        for (int i = 0; i < players.Count; i++)
-        {
-            players[i].VoteStatus = 0;
-        }
     }
+   
+
+     public void CheckHighest()
+    {
+        int highestScore = -1;
+        highestGroup = -1;
+        Debug.Log("list count: " + groupScores.Count);
+
+        for (int i = 0; i < groupScores.Count; i++)
+        {
+            if (groupScores[i] > highestScore)
+            {
+                highestScore = groupScores[i];
+                highestGroup = i;
+            }
+
+        }
+        print("Highest group: " + highestGroup);
+    }
+        
+
 
 
     //public readonly SyncList<Player> players = new SyncList<Player>();
@@ -152,7 +170,7 @@ public sealed class GameManager : NetworkBehaviour
     public void CreateAndAssignGroups()
     {
         Debug.Log("Inside ");
-        int numGroups = 0;
+
         int numPlayers = players.Count;
         int groupNumber = 0;
         /*
@@ -162,11 +180,11 @@ public sealed class GameManager : NetworkBehaviour
         {
             numGroups = 2;
         }
-        else if(numPlayers <= 16)
+        else if (numPlayers <= 16)
         {
             numGroups = 4;
         }
-        else if(numPlayers <= 32)
+        else if (numPlayers <= 32)
         {
             numGroups = 8;
         }
@@ -174,13 +192,18 @@ public sealed class GameManager : NetworkBehaviour
         {
             Debug.Log("Bad Error Message GameManager 179");
         }
+
         /*
         for(int i = 0; i < numGroups; i++)
         {
             groups.Add(new Group());
         }
         */
-        for(int i = 0; i < numPlayers; i++)
+        for (int i = 0; i < numGroups; i++)
+        {
+            groupScores.Add(0);
+        }
+        for (int i = 0; i < numPlayers; i++)
         {
             if (groupNumber == numGroups)
             {
@@ -190,42 +213,60 @@ public sealed class GameManager : NetworkBehaviour
             players[i].GroupNumber = groupNumber;
             groupNumber++;
         }
-        ShowLobbyView();
+        viewNum = 1;
     }
 
-    [Server]
-    public void ShowLobbyView()
+    // Update is called once per frame
+    void FixedUpdate()
     {
-        for (int i = 0; i < players.Count; i++)
-        {
-            players[i].ShowLobby = true;
-        }
+        if (!IsServer) return;
+
     }
 
-    [Server]
-    public void StartGame()
+
+
+    [ServerRpc(RequireOwnership = false)]
+    public void ReadyCheck()
     {
+        bool readyStartRound = players.All(player => player.IsReady);
         
-        if (CanStart)
+            if (readyStartRound)
+            {
+                roundNum += 1;
+                Debug.Log("Round Num: " + roundNum);
+                viewNum += 1;
+                ResetAll();
+            }
+        bool ReadyEndRound = players.All(player => player.HasVoted);
+        if (ReadyEndRound)
         {
             for (int i = 0; i < players.Count; i++)
             {
-                //players[i].StartGame();
-                players[i].R1Start = true;
-                r1Active = true;
-                roundNum = 1;
+                CheckVotes(players[i]);
             }
+        AssignScores();
+        CheckHighest();
+        viewNum += 1;
+        ResetAll();
+
         }
     }
 
-    [Server]
-    public void NextRound()
+
+
+    public void ResetAll()
     {
+        //Is Ready 
         for (int i = 0; i < players.Count; i++)
         {
+            players[i].IsReady = false;
+            players[i].HasVoted = false;
+            players[i].VoteStatus = 0;
+        }
 
-            players[i].R1End = true;
-            //roundNum += 1;
+        for (int i = 0; i < numGroups; i++)
+        {
+            groupVotes[i] = 0;
         }
     }
 

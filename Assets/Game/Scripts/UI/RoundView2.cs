@@ -6,7 +6,7 @@ using FishNet.Object.Synchronizing;
 using System.Linq;
 using UnityEngine.UI;
 
-public class RoundView : View
+public class RoundView2 : View
 {
 
     [SerializeField]
