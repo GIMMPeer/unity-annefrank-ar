@@ -588,7 +588,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _startInOffline: 0
   _offlineScene: Assets/Game/Scenes/Menu.unity
-  _onlineScene: Assets/Game/Scenes/Lobby.unity
+  _onlineScene: Assets/Game/Scenes/Game.unity
   _replaceScenes: 0
 --- !u!114 &1110977240
 MonoBehaviour:
@@ -1131,7 +1131,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2005033671
 RectTransform:
   m_ObjectHideFlags: 0

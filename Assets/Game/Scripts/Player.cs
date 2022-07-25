@@ -16,6 +16,46 @@ public sealed class Player : NetworkBehaviour
         private set;
     }
 
+    [field: SerializeField]
+    [field: SyncVar]
+    public int GroupNumber
+    {
+        get;
+
+        [ServerRpc(RequireOwnership = false)]
+        set;
+    }
+
+
+    [field: SerializeField]
+    [field: SyncVar]
+    public int Score
+    {
+        get;
+
+        [ServerRpc]
+        private set;
+    }
+
+    [field: SyncVar]
+    public bool ShowLobby
+    {
+        get;
+
+        [ServerRpc(RequireOwnership = false)]
+        set;
+    }
+
+    [field: SyncVar]
+    public bool HasVoted
+    {
+        get;
+
+        [ServerRpc(RequireOwnership = false)]
+        set;
+    } = false;
+
+
     [field: SyncVar]
     public bool IsReady
     {
@@ -24,6 +64,18 @@ public sealed class Player : NetworkBehaviour
         [ServerRpc(RequireOwnership = false)]
         set;
     }
+
+    [field: SyncVar]
+    public int VoteStatus
+    {
+        get;
+
+        [ServerRpc(RequireOwnership = false)]
+        set;
+    }
+  
+
+  
 
     /*
     [SyncObject]
@@ -77,8 +129,10 @@ public sealed class Player : NetworkBehaviour
     [Server]
     public void StartGame()
     {
+        if (!IsOwner) return;
+        Debug.Log("Starting Game" + this.Username);
 
-        Debug.Log("Starting Game");
+        
     }
 
     [Server]
@@ -95,8 +149,42 @@ public sealed class Player : NetworkBehaviour
     void Update()
     {
         if (!IsOwner) return;
+
+
+        switch (GameManager.Instance.viewNum)
+        {
+            case 0:
+                
+                break;
+            case 1:
+                UIManager.Instance.Show<LobbyView>();
+               
+                break;
+            case 2:
+                UIManager.Instance.Show<DilemmaView>();
+                
+                break;
+            case 3:
+                UIManager.Instance.Show<RoundView>();
+                break;
+            case 4:
+                UIManager.Instance.Show<DilemmaView2>();
+                break;
+            case 5:
+                UIManager.Instance.Show<RoundView2>();
+                break;
+        }
+        
+        
+       
+
+       
     }
 
+    public void LoadView<V>() where V : View
+    {
+        UIManager.Instance.Show<V>();
+    }
     public void SetUsername()
     {
         int adjective = Random.Range(0, adjectives.Length);

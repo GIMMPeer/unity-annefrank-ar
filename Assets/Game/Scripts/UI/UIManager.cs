@@ -30,7 +30,6 @@ public sealed class UIManager : MonoBehaviour
 
             view.Hide();
 
-
         }
         if(defaultView != null) defaultView.Show();
     }
