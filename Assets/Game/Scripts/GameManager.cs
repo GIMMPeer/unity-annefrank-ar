@@ -1,6 +1,8 @@
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using FishNet.Connection;
 
@@ -28,7 +30,6 @@ public sealed class GameManager : NetworkBehaviour
     [field: SyncVar]
     public bool CanStart { get; private set; }
 
-    
     [field: SyncVar]
     public int highestGroup { get; private set; }
 
@@ -43,9 +44,6 @@ public sealed class GameManager : NetworkBehaviour
     [field: SyncVar]
     public int numGroups { get; private set; }
 
-    //[field: SyncVar]
-    //public int highestGroup { get; private set; }
-
     private void Awake()
     {
         Instance = this;
@@ -54,11 +52,8 @@ public sealed class GameManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void CheckVotes(Player player)
     {
-
         var playerGroupNum = player.GroupNumber;
         groupVotes[playerGroupNum] += player.VoteStatus;
-        Debug.Log("Group 1 Votes" + groupVotes[playerGroupNum]);
-
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -73,15 +68,12 @@ public sealed class GameManager : NetworkBehaviour
                     {
                         groupScores[i] += 2;
                         groupScores[i + 1] += 2;
-                        Debug.Log(groupScores[i]);
-                        Debug.Log(groupScores[i + 1]);
+                        
                     }
                     else if (groupVotes[i] < 0 && groupVotes[i + 1] < 0) //Cooperate
                     {
                         groupScores[i] += 1;
                         groupScores[i + 1] += 1;
-                        Debug.Log(groupScores[i]);
-                        Debug.Log(groupScores[i + 1]);
                     }
                     else if (groupVotes[i] < 0 && groupVotes[i + 1] > 0)//higher team comp
                     {
@@ -130,6 +122,7 @@ public sealed class GameManager : NetworkBehaviour
                 print("ERR: Outcast");
                 break;
         }
+        CheckHighest();
     }
    
 
@@ -137,20 +130,20 @@ public sealed class GameManager : NetworkBehaviour
     {
         int highestScore = -1;
         highestGroup = -1;
-        Debug.Log("list count: " + groupScores.Count);
 
-        Debug.Log("Score list: " + groupScores);
+        List<int> highestGroupList = new List<int>();
+
         for (int i = 0; i < groupScores.Count; i++)
         {
-            //print("Score: " + groupScores[i]);
-            if (groupScores[i] > highestScore)
-            {
+            if (groupScores[i] > highestScore) {
+                highestGroupList.Clear();
+                highestGroupList.Add(i);
                 highestScore = groupScores[i];
-                highestGroup = i;
+            } else if (groupScores[i] == highestScore) {
+                highestGroupList.Add(i);
             }
-            
         }
-        //print("Highest group: " + highestGroup);
+        highestGroup = highestGroupList[Random.Range(0, highestGroupList.Count)];
     }
         
 
@@ -160,7 +153,7 @@ public sealed class GameManager : NetworkBehaviour
     [Server]
     public void CreateAndAssignGroups()
     {
-        Debug.Log("Inside ");
+        //Debug.Log("Inside ");
 
         int numPlayers = players.Count;
         int groupNumber = 0;
@@ -224,7 +217,7 @@ public sealed class GameManager : NetworkBehaviour
             if (readyStartRound)
             {
                 roundNum += 1;
-                Debug.Log("Round Num: " + roundNum);
+                //Debug.Log("Round Num: " + roundNum);
                 viewNum += 1;
                 ResetAll();
             }
@@ -235,11 +228,11 @@ public sealed class GameManager : NetworkBehaviour
             {
                 CheckVotes(players[i]);
             }
-        AssignScores();
-        if (viewNum == 2)
+            AssignScores();
+            /*if (viewNum == 2)
         {
-         CheckHighest();
-        }
+         
+        }*/
         
         viewNum += 1;
         ResetAll();

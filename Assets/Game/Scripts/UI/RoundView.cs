@@ -15,8 +15,6 @@ public class RoundView : View
     [SerializeField]
     private TextMeshProUGUI group2Score;
 
-    
-
     [SerializeField]
     private TextMeshProUGUI group1Prop;
 
@@ -36,21 +34,11 @@ public class RoundView : View
 
     [SerializeField]
     private Button continueButton;
+
     public override void Initialize()
     {
         base.Initialize();
-        toggleReadyButton.onClick.AddListener(() => Player.Instance.IsReady = !Player.Instance.IsReady);
-
-        if (InstanceFinder.IsServer)
-        {
-            continueButton.onClick.AddListener(() => GameManager.Instance.ReadyCheck());
-        }
-        else
-        {
-            continueButton.gameObject.SetActive(false);
-        }
-
-       
+        
     }
 
     public override void Show(object args = null)
@@ -67,8 +55,17 @@ public class RoundView : View
     {
         if (!IsInitialized) return;
 
+
+        toggleReadyButton.onClick.AddListener(() => Player.Instance.IsReady = !Player.Instance.IsReady);
+
+        if (InstanceFinder.IsServer) {
+            continueButton.onClick.AddListener(() => GameManager.Instance.ReadyCheck());
+        } else {
+            continueButton.gameObject.SetActive(false);
+        }
+
         group1Score.text = $" Group 1 Score : {GameManager.Instance.groupScores[0]}";
-        
+
         group2Score.text = $" Group 2 Score : {GameManager.Instance.groupScores[1]}";
 
         /*
@@ -77,21 +74,20 @@ public class RoundView : View
             Debug.Log(GameManager.Instance.highestGroup);
             if(i == GameManager.Instance.highestGroup)
             {*/
-        
-            //} 
-           
+
+        //} 
+
         //}
         readyButtonText.color = Player.Instance.IsReady ? Color.green : Color.red;
 
-        Debug.Log("Highest Group(RV): " + GameManager.Instance.highestGroup);
+        //Debug.Log("Highest Group(RV): " + GameManager.Instance.highestGroup);
 
-        switch (GameManager.Instance.highestGroup)
-        {
+        switch (GameManager.Instance.highestGroup) {
             case 0:
                 group1Prop.gameObject.SetActive(true);
                 group1Prop.text = "You are bad!";
                 group2Prop.gameObject.SetActive(false);
-               
+
                 break;
             case 1:
                 group2Prop.gameObject.SetActive(true);
@@ -102,8 +98,12 @@ public class RoundView : View
                 break;
 
         }
+
+
+    }
+
+    private void SetUpRoundEnd() {
+
         
-
-
     }
 }
