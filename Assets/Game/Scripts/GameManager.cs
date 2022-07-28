@@ -110,34 +110,27 @@ public sealed class GameManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void AssignScores()
     {
-        switch (roundNum)
-        {
+        switch (roundNum) {
             case 1:
-                for (int i = 0; i < numGroups; i += 2)
-                {
+                for (int i = 0; i < numGroups; i += 2) {
                     if (groupVotes[i] >= 0 && groupVotes[i + 1] >= 0) //Compete
                     {
                         groupScores[i] += 2;
                         groupScores[i + 1] += 2;
-                        
-                    }
-                    else if (groupVotes[i] < 0 && groupVotes[i + 1] < 0) //Cooperate
-                    {
+
+                    } else if (groupVotes[i] < 0 && groupVotes[i + 1] < 0) //Cooperate
+                      {
                         groupScores[i] += 1;
                         groupScores[i + 1] += 1;
-                    }
-                    else if (groupVotes[i] < 0 && groupVotes[i + 1] > 0)//higher team comp
-                    {
+                    } else if (groupVotes[i] < 0 && groupVotes[i + 1] > 0)//higher team comp
+                      {
                         groupScores[i] += 1;
                         groupScores[i + 1] += 4;
-                    }
-                    else if (groupVotes[i] > 0 && groupVotes[i + 1] < 0)//lower team comp
-                    {
+                    } else if (groupVotes[i] > 0 && groupVotes[i + 1] < 0)//lower team comp
+                      {
                         groupScores[i] += 4;
                         groupScores[i + 1] += 1;
-                    }
-                    else
-                    {
+                    } else {
                         Debug.Log("Error");
                     }
                 }
@@ -146,25 +139,32 @@ public sealed class GameManager : NetworkBehaviour
 
             case 2:
 
-                for (int i = 0; i < numGroups; i ++)
-                {
+                for (int i = 0; i < numGroups; i++) {
 
-                    if (i == highestGroup)
-                    {
+                    if (i == highestGroup) {
                         groupScores[i] -= 1;
-                    }
-                    else if (groupVotes[i] >= 0)
-                    {
+                    } else if (groupVotes[i] >= 0) {
                         groupScores[i] += 10;
-                    }
-                    else if (groupVotes[i] < 0)
-                    {
+                    } else if (groupVotes[i] < 0) {
                         Debug.Log("Do nothing");
                     }
                 }
                 break;
             case 3:
+                int votesFor = 0;
+                int votesAgainst = 0;
+                for (int i = 0; i < numGroups; i++) {
+                    if (groupVotes[i] >= 0) {
+                        votesFor++;
+                    } else {
+                        votesAgainst++;
+                    }
+                }
+                if (votesFor >= votesAgainst) {
 
+                } else {
+                    StopGame();
+                }
                 break;
             case 4:
 
