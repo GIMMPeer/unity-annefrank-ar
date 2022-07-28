@@ -14,11 +14,6 @@ public sealed class GameManager : NetworkBehaviour
     [SyncObject]
     public readonly SyncList<Player> players = new SyncList<Player>();
 
-    /*
-    [SyncObject]
-    public readonly SyncList<Group> groups = new SyncList<Group>();
-    */
-
     private int[] groupVotes = new int[4];
 
 
@@ -126,7 +121,7 @@ public sealed class GameManager : NetworkBehaviour
     }
    
 
-     public void CheckHighest()
+    public void CheckHighest()
     {
         int highestScore = -1;
         highestGroup = -1;
@@ -144,6 +139,8 @@ public sealed class GameManager : NetworkBehaviour
             }
         }
         highestGroup = highestGroupList[Random.Range(0, highestGroupList.Count)];
+        Debug.Log("Group scores: " + groupScores[0] + ", " + groupScores[1]);
+        //Debug.Log("Highest group: " + highestGroup);
     }
         
 
@@ -153,8 +150,6 @@ public sealed class GameManager : NetworkBehaviour
     [Server]
     public void CreateAndAssignGroups()
     {
-        //Debug.Log("Inside ");
-
         int numPlayers = players.Count;
         int groupNumber = 0;
         /*
@@ -177,12 +172,6 @@ public sealed class GameManager : NetworkBehaviour
             Debug.Log("Bad Error Message GameManager 179");
         }
 
-        /*
-        for(int i = 0; i < numGroups; i++)
-        {
-            groups.Add(new Group());
-        }
-        */
         for (int i = 0; i < numGroups; i++)
         {
             groupScores.Add(0);
@@ -217,7 +206,6 @@ public sealed class GameManager : NetworkBehaviour
             if (readyStartRound)
             {
                 roundNum += 1;
-                //Debug.Log("Round Num: " + roundNum);
                 viewNum += 1;
                 ResetAll();
             }

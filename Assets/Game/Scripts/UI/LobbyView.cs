@@ -38,6 +38,7 @@ public class LobbyView : View
 
     public override void Initialize()
     {
+        Debug.Log("Initialized");
         base.Initialize();
 
         toggleReadyButton.onClick.AddListener(() => Player.Instance.IsReady = !Player.Instance.IsReady);

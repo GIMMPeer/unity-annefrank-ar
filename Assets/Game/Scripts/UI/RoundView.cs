@@ -24,7 +24,7 @@ public class RoundView : View
     [SerializeField]
     private TextMeshProUGUI[] groupPropText;
     [SerializeField]
-    private TextMeshProUGUI[] groupScores;
+    private TextMeshProUGUI[] groupScoreText;
 
     [SerializeField]
     private Button toggleReadyButton;
@@ -35,27 +35,7 @@ public class RoundView : View
     [SerializeField]
     private Button continueButton;
 
-    public override void Initialize()
-    {
-        base.Initialize();
-        
-    }
-
-    public override void Show(object args = null)
-    {
-        base.Show(args);
-
-       
-        
-
-    }
-
-    // Update is called once per frame
-    private void Update()
-    {
-        if (!IsInitialized) return;
-
-
+    void OnEnable() {
         toggleReadyButton.onClick.AddListener(() => Player.Instance.IsReady = !Player.Instance.IsReady);
 
         if (InstanceFinder.IsServer) {
@@ -64,46 +44,13 @@ public class RoundView : View
             continueButton.gameObject.SetActive(false);
         }
 
-        group1Score.text = $" Group 1 Score : {GameManager.Instance.groupScores[0]}";
-
-        group2Score.text = $" Group 2 Score : {GameManager.Instance.groupScores[1]}";
-
-        /*
-        for(int i = 0; i < GameManager.Instance.numGroups; i++)
-        {
-            Debug.Log(GameManager.Instance.highestGroup);
-            if(i == GameManager.Instance.highestGroup)
-            {*/
-
-        //} 
-
-        //}
-        readyButtonText.color = Player.Instance.IsReady ? Color.green : Color.red;
-
-        //Debug.Log("Highest Group(RV): " + GameManager.Instance.highestGroup);
-
-        switch (GameManager.Instance.highestGroup) {
-            case 0:
-                group1Prop.gameObject.SetActive(true);
-                group1Prop.text = "You are bad!";
-                group2Prop.gameObject.SetActive(false);
-
-                break;
-            case 1:
-                group2Prop.gameObject.SetActive(true);
-                group2Prop.text = "You are bad!";
-                group1Prop.gameObject.SetActive(false);
-                break;
-            default:
-                break;
-
+        Debug.Log("Highest Group End: " + GameManager.Instance.highestGroup);
+        for (int i = 0; i < GameManager.Instance.numGroups; i++) {
+            groupScoreText[i].text = $"Group {i+1} Score: {GameManager.Instance.groupScores[i]}";
+            if (i == GameManager.Instance.highestGroup) {
+                groupPropText[i].gameObject.SetActive(true);
+            }
         }
-
-
-    }
-
-    private void SetUpRoundEnd() {
-
-        
+        readyButtonText.color = Player.Instance.IsReady ? Color.green : Color.red;
     }
 }

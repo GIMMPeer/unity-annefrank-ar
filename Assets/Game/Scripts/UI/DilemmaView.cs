@@ -36,10 +36,10 @@ public class DilemmaView : View
         });
     }
 
-    public override void Show(object args = null)
+    /*public override void Show(object args = null)
     {
         base.Show(args);
-    }
+    }*/
 
     // Update is called once per frame
     void Update()
