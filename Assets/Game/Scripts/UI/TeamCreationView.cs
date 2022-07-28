@@ -39,7 +39,7 @@ public class TeamCreationView : View
         {
             Player currentPlayer = GameManager.Instance.players[i];
 
-            playerListText += $"\r\n {currentPlayer.Username} (IsReady: {currentPlayer.IsReady}) (groupNumber: {currentPlayer.GroupNumber}";
+            playerListText += $"\r\n {currentPlayer.Username} (IsReady: {currentPlayer.IsReady}) (groupNumber: {currentPlayer.GroupNumber})";
         }
 
         playerList.text = playerListText;

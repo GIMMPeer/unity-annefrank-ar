@@ -6,29 +6,28 @@ using FishNet.Object.Synchronizing;
 using System.Linq;
 using UnityEngine.UI;
 
-public class DilemmaView : View
+public class Round2DilemView : View
 {
-
     [SerializeField]
     private TextMeshProUGUI dilemmaText;
 
     [SerializeField]
-    private Button coopButton;
+    private Button helpButton;
 
     [SerializeField]
-    private Button compButton;
+    private Button nothingButton;
 
 
     public override void Initialize()
     {
         base.Initialize();
 
-        coopButton.onClick.AddListener(() => {
+        helpButton.onClick.AddListener(() => {
             Player.Instance.VoteStatus = -1;
             Player.Instance.HasVoted = true;
             GameManager.Instance.ReadyCheck();
         });
-        compButton.onClick.AddListener(() =>
+        nothingButton.onClick.AddListener(() =>
         {
             Player.Instance.VoteStatus = 1;
             Player.Instance.HasVoted = true;
@@ -36,14 +35,18 @@ public class DilemmaView : View
         });
     }
 
-    /*public override void Show(object args = null)
+    public override void Show(object args = null)
     {
         base.Show(args);
-    }*/
+    }
 
     // Update is called once per frame
     void Update()
     {
         
+        dilemmaText.text = $" Group {GameManager.Instance.highestGroup} is being accused of cheating. Another group is ganging up with the other groups to make sure they don't cheat again! They say that if you stay out of it, they will give you points." + 
+            $"What do you do?";
+
+
     }
 }

@@ -38,18 +38,14 @@ public class LobbyView : View
 
     public override void Initialize()
     {
-        Debug.Log("Initialized");
         base.Initialize();
 
         toggleReadyButton.onClick.AddListener(() => Player.Instance.IsReady = !Player.Instance.IsReady);
         //Player.Instance.SetUsername();
 
-        if (InstanceFinder.IsServer)
-        { 
+        if (InstanceFinder.IsServer) { 
             startGameButton.onClick.AddListener(() => GameManager.Instance.ReadyCheck());
-        }
-        else 
-        {
+        } else {
             startGameButton.gameObject.SetActive(false);
         }
     }
@@ -69,35 +65,23 @@ public class LobbyView : View
         string teamThree = "";
         string teamFour = "";
 
-        for (var i = 0; i < GameManager.Instance.players.Count; i++)
-        {
+        for (var i = 0; i < GameManager.Instance.players.Count; i++) {
             Player currentPlayer = GameManager.Instance.players[i];
 
-            if (currentPlayer.GroupNumber == 0)
-            {
+            if (currentPlayer.GroupNumber == 0) {
                 teamOne += $"\r\n {currentPlayer.Username}";
             }
-            if (currentPlayer.GroupNumber == 1)
-            {
+            if (currentPlayer.GroupNumber == 1) {
                 teamTwo += $"\r\n {currentPlayer.Username}";
             }
-            if (currentPlayer.GroupNumber == 2)
-            {
+            if (currentPlayer.GroupNumber == 2) {
                 teamThree += $"\r\n {currentPlayer.Username}";
             }
-            if (currentPlayer.GroupNumber == 3)
-            {
+            if (currentPlayer.GroupNumber == 3) {
                 teamFour += $"\r\n {currentPlayer.Username}";
             }
-
         }
 
-        /*
-        if (GameManager.Instance.numGroups = 2)
-        {
-            teamOneTitle.setactive(false);
-        }
-        */
         for (int i = 0; i < GameManager.Instance.numGroups; i++)
         {
             teamTitles[i].gameObject.SetActive(true);

@@ -6,7 +6,7 @@ using FishNet.Object.Synchronizing;
 using System.Linq;
 using UnityEngine.UI;
 
-public class RoundView : View
+public class Round1EndView : View
 {
 
     [SerializeField]
@@ -51,6 +51,9 @@ public class RoundView : View
                 groupPropText[i].gameObject.SetActive(true);
             }
         }
+    }
+
+    void Update() {
         readyButtonText.color = Player.Instance.IsReady ? Color.green : Color.red;
     }
 }

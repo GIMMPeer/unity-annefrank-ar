@@ -14,7 +14,7 @@ public sealed class GameManager : NetworkBehaviour
     [SyncObject]
     public readonly SyncList<Player> players = new SyncList<Player>();
 
-    private int[] groupVotes = new int[4];
+    private int[] groupVotes;
 
 
     [SyncObject]
@@ -42,6 +42,62 @@ public sealed class GameManager : NetworkBehaviour
     private void Awake()
     {
         Instance = this;
+    }
+
+    void FixedUpdate() {
+        if (!IsServer)
+            return;
+    }
+
+    [Server]
+    public void CreateAndAssignGroups() {
+        int numPlayers = players.Count;
+        int groupNumber = 0;
+        // Create Groups based on number of players
+        if (numPlayers > 0 && numPlayers <= 8) {
+            numGroups = 2;
+        } else if (numPlayers <= 16) {
+            numGroups = 4;
+        } else if (numPlayers <= 32) {
+            numGroups = 8;
+        } else {
+            Debug.Log("Bad Error Message GameManager 179");
+        }
+
+        // Instantiate vote and score lists based off number of players
+        groupVotes = new int[numPlayers];
+        for (int i = 0; i < numGroups; i++) {
+            groupScores.Add(0);
+        }
+
+        // Sort players into groups
+        for (int i = 0; i < numPlayers; i++) {
+            if (groupNumber == numGroups) {
+                groupNumber = 0;
+            }
+            players[i].GroupNumber = groupNumber;
+            groupNumber++;
+        }
+        viewNum = 1;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void ReadyCheck() {
+        bool readyStartRound = players.All(player => player.IsReady);
+
+        if (readyStartRound) {
+            roundNum += 1;
+            viewNum += 1;
+            ResetAll();
+        }
+        bool ReadyEndRound = players.All(player => player.HasVoted);
+        if (ReadyEndRound) {
+            for (int i = 0; i < players.Count; i++) {
+                CheckVotes(players[i]);
+            }
+            AssignScores();
+
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -118,6 +174,8 @@ public sealed class GameManager : NetworkBehaviour
                 break;
         }
         CheckHighest();
+        viewNum += 1;
+        ResetAll();
     }
    
 
@@ -139,96 +197,7 @@ public sealed class GameManager : NetworkBehaviour
             }
         }
         highestGroup = highestGroupList[Random.Range(0, highestGroupList.Count)];
-        Debug.Log("Group scores: " + groupScores[0] + ", " + groupScores[1]);
-        //Debug.Log("Highest group: " + highestGroup);
     }
-        
-
-
-
-    //public readonly SyncList<Player> players = new SyncList<Player>();
-    [Server]
-    public void CreateAndAssignGroups()
-    {
-        int numPlayers = players.Count;
-        int groupNumber = 0;
-        /*
-         * Create Groups based on number of players
-         */
-        if (numPlayers > 0 && numPlayers <= 8)
-        {
-            numGroups = 2;
-        }
-        else if (numPlayers <= 16)
-        {
-            numGroups = 4;
-        }
-        else if (numPlayers <= 32)
-        {
-            numGroups = 8;
-        }
-        else
-        {
-            Debug.Log("Bad Error Message GameManager 179");
-        }
-
-        for (int i = 0; i < numGroups; i++)
-        {
-            groupScores.Add(0);
-        }
-        for (int i = 0; i < numPlayers; i++)
-        {
-            if (groupNumber == numGroups)
-            {
-                groupNumber = 0;
-            }
-
-            players[i].GroupNumber = groupNumber;
-            groupNumber++;
-        }
-        viewNum = 1;
-    }
-
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-        if (!IsServer) return;
-
-    }
-
-
-
-    [ServerRpc(RequireOwnership = false)]
-    public void ReadyCheck()
-    {
-        bool readyStartRound = players.All(player => player.IsReady);
-        
-            if (readyStartRound)
-            {
-                roundNum += 1;
-                viewNum += 1;
-                ResetAll();
-            }
-        bool ReadyEndRound = players.All(player => player.HasVoted);
-        if (ReadyEndRound)
-        {
-            for (int i = 0; i < players.Count; i++)
-            {
-                CheckVotes(players[i]);
-            }
-            AssignScores();
-            /*if (viewNum == 2)
-        {
-         
-        }*/
-        
-        viewNum += 1;
-        ResetAll();
-
-        }
-    }
-
-
 
     public void ResetAll()
     {

@@ -161,16 +161,16 @@ public sealed class Player : NetworkBehaviour
                
                 break;
             case 2:
-                UIManager.Instance.Show<DilemmaView>();
+                UIManager.Instance.Show<Round1DilemView>();
                 
                 break;
             case 3:
-                UIManager.Instance.Show<RoundView>();
+                UIManager.Instance.Show<Round1EndView>();
                 break;
             case 4:
                 if (GroupNumber != GameManager.Instance.highestGroup)
                 {
-                    UIManager.Instance.Show<DilemmaView2>();
+                    UIManager.Instance.Show<Round2DilemView>();
                 }
                 else
                 {
@@ -178,7 +178,7 @@ public sealed class Player : NetworkBehaviour
                 }
                 break;
             case 5:
-                UIManager.Instance.Show<RoundView2>();
+                UIManager.Instance.Show<Round2EndView>();
                 break;
         }
         
