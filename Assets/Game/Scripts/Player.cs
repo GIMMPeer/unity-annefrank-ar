@@ -186,6 +186,21 @@ public sealed class Player : NetworkBehaviour
             case 7:
                 UIManager.Instance.Show<Round3EndView>();
                 break;
+            case 8:
+                UIManager.Instance.Show<Round4DilemView>();
+                break;
+            case 9:
+                if (GroupNumber != GameManager.Instance.highestGroup)
+                {
+                    UIManager.Instance.Show<Round4ViolenceView>();
+                }
+                else {
+                    UIManager.Instance.Show<Round4AttackedView>();
+                }
+                break;
+            case 10:
+                UIManager.Instance.Show<Round4EndView>();
+                break;
         }
         
         

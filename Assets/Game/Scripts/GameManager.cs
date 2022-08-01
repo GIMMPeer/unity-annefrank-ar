@@ -42,11 +42,23 @@ public sealed class GameManager : NetworkBehaviour
     [field: SyncVar]
     public bool discrimLaw { get; private set; } = false;
 
+    [field: SyncVar]
+    public bool speakUp1 {
+        get; 
+        [ServerRpc]
+        private set; 
+    } = false;
+
+    [field: SyncVar]
+    public bool speakUp2 { get; private set; } = false;
+
+    private bool groupSet = false;
     private void Awake()
     {
         Instance = this;
     }
 
+    
     void FixedUpdate() {
         if (!IsServer)
             return;
@@ -153,6 +165,7 @@ public sealed class GameManager : NetworkBehaviour
                         }
                         else if (groupVotes[i] < 0){
                             groupScores[i] -= 5;
+                            speakUp1 = true;
                         }
                     } else if (groupVotes[i] >= 0) {
                         groupScores[i] += 10;
@@ -190,6 +203,60 @@ public sealed class GameManager : NetworkBehaviour
             case 4:
 
                 //If discrimLaw = true then highest group(otherized group) will multiply points by 0.5
+
+               
+                for (int i = 0; i < numGroups; i += 2)
+                {
+
+                    if (groupVotes[i] >= 0 && groupVotes[i + 1] >= 0) //Compete
+                    {
+                        groupScores[i] += 2;
+                        groupScores[i + 1] += 2;
+                        
+                        
+                    }
+                    else if (groupVotes[i] < 0 && groupVotes[i + 1] < 0) //Cooperate
+                    {
+                        groupScores[i] += 1;
+                        groupScores[i + 1] += 1;
+                    }
+                    else if (groupVotes[i] < 0 && groupVotes[i + 1] > 0)//higher team comp
+                    {
+                        groupScores[i] += 1;
+                        groupScores[i + 1] += 4;
+                    }
+                    else if (groupVotes[i] > 0 && groupVotes[i + 1] < 0)//lower team comp
+                    {
+                        groupScores[i] += 4;
+                        groupScores[i + 1] += 1;
+                    }
+                    else
+                    {
+                        Debug.Log("Error");
+                    }
+                }
+                if(discrimLaw)
+                    groupScores[highestGroup] -= 2;
+                break;
+
+            case 5: //Not round 5, actually Round 4 Violence & Attacked Views
+                for (int i = 0; i < numGroups; i++)
+                {
+
+                    if (i == highestGroup)
+                    {
+                        if (groupVotes[i] > 0)
+                        {
+                            speakUp2 = true;
+                            //This should add some text that tells the other group that what they are hearing is not true.
+                        }
+                    }
+                    else if (groupVotes[i] < 0)
+                    {
+                        groupScores[i] -= 10;
+                        //Need end functionality here.
+                    }
+                }
                 break;
             default:
                 print("ERR: Outcast");
@@ -219,6 +286,8 @@ public sealed class GameManager : NetworkBehaviour
             }
         }
         highestGroup = highestGroupList[Random.Range(0, highestGroupList.Count)];
+
+        groupSet = true;
     }
 
     public void ResetAll()
@@ -243,6 +312,27 @@ public sealed class GameManager : NetworkBehaviour
         for (int i = 0; i < players.Count; i++)
         {
             players[i].StopGame();
+        }
+    }
+
+    private void Update()
+    {
+
+        if (groupSet)
+        {
+            
+            if (groupVotes[highestGroup] > 0)
+            {
+                Debug.Log("Speak up is true");
+                speakUp1 = true;
+                speakUp2 = true;
+            }
+            else
+            {
+                speakUp1 = false;
+                speakUp2 = false;
+            }
+            Debug.Log("Speak up " + speakUp1);
         }
     }
 

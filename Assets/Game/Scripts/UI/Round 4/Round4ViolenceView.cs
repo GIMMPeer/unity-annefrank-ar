@@ -5,27 +5,23 @@ using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using System.Linq;
 using UnityEngine.UI;
-
-public class Round2DilemView : View
+public class Round4ViolenceView : View
 {
     [SerializeField]
     private TextMeshProUGUI dilemmaText;
 
     [SerializeField]
-    private Button helpButton;
+    private Button stopButton;
 
     [SerializeField]
     private Button nothingButton;
-
-    [SerializeField]
-    private TextMeshProUGUI otherText;
 
 
     public override void Initialize()
     {
         base.Initialize();
 
-        helpButton.onClick.AddListener(() => {
+        stopButton.onClick.AddListener(() => {
             Player.Instance.VoteStatus = -1;
             Player.Instance.HasVoted = true;
             GameManager.Instance.ReadyCheck();
@@ -46,18 +42,9 @@ public class Round2DilemView : View
     // Update is called once per frame
     void Update()
     {
-        
-        dilemmaText.text = $" Group {GameManager.Instance.highestGroup} is being accused of cheating. Another group is ganging up with the other groups to make sure they don't cheat again! They say that if you stay out of it, they will give you points." + 
-            $"What do you do?";
 
-        if (GameManager.Instance.speakUp1 == true)
-        {
-            otherText.gameObject.SetActive(true);
-            otherText.text = $" Group {GameManager.Instance.highestGroup} says that they didn't do anyhting. This is all a lie that other groups are telling";
-        }
-        else
-        {
-            otherText.gameObject.SetActive(false);
-        }
+        dilemmaText.text = $" Things have been escalating and the anonymous group is planning to steal away group {GameManager.Instance.highestGroup}'s points! Your group has an option to either stop them, risking several of your own points, or stand back which will keep you safe. Discuss with your group to decide the right course of action.";
+
+
     }
 }

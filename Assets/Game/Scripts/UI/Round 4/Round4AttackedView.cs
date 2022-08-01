@@ -7,30 +7,21 @@ using System.Linq;
 using UnityEngine.UI;
 
 
-public class AttackedView : View
+public class Round4AttackedView : View
 {
-    
 
 
-    [SerializeField]
-    private Button fightBack;
 
     [SerializeField]
-    private Button stayDown;
+    private Button Speakup;
+
+    [SerializeField]
+    private Button nothing;
 
     public override void Initialize()
     {
         base.Initialize();
-        fightBack.onClick.AddListener(() => {
-
-            Player.Instance.HasVoted = !Player.Instance.HasVoted;
-            Player.Instance.VoteStatus = 1;
-
-            GameManager.Instance.ReadyCheck();
-            
-            });
-
-        stayDown.onClick.AddListener(() => {
+        Speakup.onClick.AddListener(() => {
 
             Player.Instance.HasVoted = !Player.Instance.HasVoted;
             Player.Instance.VoteStatus = -1;
@@ -39,11 +30,18 @@ public class AttackedView : View
 
         });
 
+        nothing.onClick.AddListener(() => {
+
+            Player.Instance.HasVoted = !Player.Instance.HasVoted;
+            Player.Instance.VoteStatus = 1;
+
+            GameManager.Instance.ReadyCheck();
+
+        });
+
 
     }
 
-    private void Update()
-    {
-    }
+   
 
 }
