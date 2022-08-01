@@ -180,6 +180,12 @@ public sealed class Player : NetworkBehaviour
             case 5:
                 UIManager.Instance.Show<Round2EndView>();
                 break;
+            case 6:
+                UIManager.Instance.Show<Round3DilemView>();
+                break;
+            case 7:
+                UIManager.Instance.Show<Round3EndView>();
+                break;
         }
         
         

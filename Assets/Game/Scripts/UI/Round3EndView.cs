@@ -5,17 +5,15 @@ using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using System.Linq;
 using UnityEngine.UI;
-
-public class Round2EndView : View
+public class Round3EndView : View
 {
-
     [SerializeField]
     private TextMeshProUGUI group1Score;
 
     [SerializeField]
     private TextMeshProUGUI group2Score;
 
-    
+
 
     [SerializeField]
     private TextMeshProUGUI group1Prop;
@@ -50,15 +48,15 @@ public class Round2EndView : View
             continueButton.gameObject.SetActive(false);
         }
 
-       
+
     }
 
     public override void Show(object args = null)
     {
         base.Show(args);
 
-       
-        
+
+
 
     }
 
@@ -68,7 +66,7 @@ public class Round2EndView : View
         if (!IsInitialized) return;
 
         group1Score.text = $" Group 1 Score : {GameManager.Instance.groupScores[0]}";
-        
+
         group2Score.text = $" Group 2 Score : {GameManager.Instance.groupScores[1]}";
 
         /*
@@ -77,9 +75,9 @@ public class Round2EndView : View
             Debug.Log(GameManager.Instance.highestGroup);
             if(i == GameManager.Instance.highestGroup)
             {*/
-        
-            //} 
-           
+
+        //} 
+
         //}
         readyButtonText.color = Player.Instance.IsReady ? Color.green : Color.red;
 
@@ -89,20 +87,20 @@ public class Round2EndView : View
         {
             case 0:
                 group1Prop.gameObject.SetActive(true);
-                group1Prop.text = "You are bad!";
+                group1Prop.text = "You are lesser. You are a cheater. You only get half points now!";
                 group2Prop.gameObject.SetActive(false);
-               
+
                 break;
             case 1:
                 group2Prop.gameObject.SetActive(true);
-                group2Prop.text = "You are bad!";
+                group2Prop.text = "You are lesser. You are a cheater. You only get half points now!";
                 group1Prop.gameObject.SetActive(false);
                 break;
             default:
                 break;
 
         }
-        
+
 
 
     }

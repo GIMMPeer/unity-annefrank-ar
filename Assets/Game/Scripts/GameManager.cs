@@ -39,6 +39,9 @@ public sealed class GameManager : NetworkBehaviour
     [field: SyncVar]
     public int numGroups { get; private set; }
 
+    [field: SyncVar]
+    public bool discrimLaw { get; private set; } = false;
+
     private void Awake()
     {
         Instance = this;
@@ -134,6 +137,7 @@ public sealed class GameManager : NetworkBehaviour
                         Debug.Log("Error");
                     }
                 }
+                CheckHighest();
 
                 break;
 
@@ -142,11 +146,21 @@ public sealed class GameManager : NetworkBehaviour
                 for (int i = 0; i < numGroups; i++) {
 
                     if (i == highestGroup) {
-                        groupScores[i] -= 1;
+
+                        if (groupVotes[i] >= 0)
+                        {
+                            groupScores[i] -= 1;
+                        }
+                        else if (groupVotes[i] < 0){
+                            groupScores[i] -= 5;
+                        }
                     } else if (groupVotes[i] >= 0) {
                         groupScores[i] += 10;
-                    } else if (groupVotes[i] < 0) {
                         Debug.Log("Do nothing");
+                    } else if (groupVotes[i] < 0) {
+                        Debug.Log("Got involved. If everyone gets involved the game should end.");
+
+                        //Need end functionality here.
                     }
                 }
                 break;
@@ -156,24 +170,32 @@ public sealed class GameManager : NetworkBehaviour
                 for (int i = 0; i < numGroups; i++) {
                     if (groupVotes[i] >= 0) {
                         votesFor++;
+                        if (groupVotes[i] != highestGroup)
+                        {
+                            groupScores[i] += 5;
+                        }
+                        Debug.Log("Votes for");
                     } else {
                         votesAgainst++;
                     }
                 }
                 if (votesFor >= votesAgainst) {
-
+                    discrimLaw = true;
+                    Debug.Log("Discrim law is" + discrimLaw);
                 } else {
                     StopGame();
+                    Debug.Log("Stop Game");
                 }
                 break;
             case 4:
 
+                //If discrimLaw = true then highest group(otherized group) will multiply points by 0.5
                 break;
             default:
                 print("ERR: Outcast");
                 break;
         }
-        CheckHighest();
+        
         viewNum += 1;
         ResetAll();
     }
