@@ -9,28 +9,41 @@ using UnityEngine.UI;
 
 public class AttackedView : View
 {
-    [SerializeField]
-    private Button toggleReadyButton;
+    
+
 
     [SerializeField]
-    private TMP_Text readyButtonText;
+    private Button fightBack;
+
+    [SerializeField]
+    private Button stayDown;
 
     public override void Initialize()
     {
         base.Initialize();
-        toggleReadyButton.onClick.AddListener(() => {
+        fightBack.onClick.AddListener(() => {
 
             Player.Instance.HasVoted = !Player.Instance.HasVoted;
+            Player.Instance.VoteStatus = -1;
+
             GameManager.Instance.ReadyCheck();
             
             });
+
+        stayDown.onClick.AddListener(() => {
+
+            Player.Instance.HasVoted = !Player.Instance.HasVoted;
+            Player.Instance.VoteStatus = 1;
+
+            GameManager.Instance.ReadyCheck();
+
+        });
 
 
     }
 
     private void Update()
     {
-        readyButtonText.color = Player.Instance.HasVoted ? Color.green : Color.red;
     }
 
 }
