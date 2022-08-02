@@ -24,7 +24,7 @@ public class Round4AttackedView : View
         Speakup.onClick.AddListener(() => {
 
             Player.Instance.HasVoted = !Player.Instance.HasVoted;
-            Player.Instance.VoteStatus = -1;
+            Player.Instance.VoteStatus = 1;
 
             GameManager.Instance.ReadyCheck();
 
@@ -33,7 +33,7 @@ public class Round4AttackedView : View
         nothing.onClick.AddListener(() => {
 
             Player.Instance.HasVoted = !Player.Instance.HasVoted;
-            Player.Instance.VoteStatus = 1;
+            Player.Instance.VoteStatus = -1;
 
             GameManager.Instance.ReadyCheck();
 

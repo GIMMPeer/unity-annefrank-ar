@@ -16,6 +16,8 @@ public class Round4ViolenceView : View
     [SerializeField]
     private Button nothingButton;
 
+    [SerializeField]
+    private TextMeshProUGUI otherText;
 
     public override void Initialize()
     {
@@ -46,5 +48,14 @@ public class Round4ViolenceView : View
         dilemmaText.text = $" Things have been escalating and the anonymous group is planning to steal away group {GameManager.Instance.highestGroup}'s points! Your group has an option to either stop them, risking several of your own points, or stand back which will keep you safe. Discuss with your group to decide the right course of action.";
 
 
+        if (GameManager.Instance.speakUp2 == true)
+        {
+            otherText.gameObject.SetActive(true);
+            otherText.text = $" Group {GameManager.Instance.highestGroup} says that they didn't do anything. This is all a lie that other groups are telling!";
+        }
+        else
+        {
+            otherText.gameObject.SetActive(false);
+        }
     }
 }

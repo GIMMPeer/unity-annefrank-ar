@@ -50,10 +50,11 @@ public class Round2DilemView : View
         dilemmaText.text = $" Group {GameManager.Instance.highestGroup} is being accused of cheating. Another group is ganging up with the other groups to make sure they don't cheat again! They say that if you stay out of it, they will give you points." + 
             $"What do you do?";
 
+       
         if (GameManager.Instance.speakUp1 == true)
         {
             otherText.gameObject.SetActive(true);
-            otherText.text = $" Group {GameManager.Instance.highestGroup} says that they didn't do anyhting. This is all a lie that other groups are telling";
+            otherText.text = $" Group {GameManager.Instance.highestGroup} says that they didn't do anything. This is all a lie that other groups are telling";
         }
         else
         {

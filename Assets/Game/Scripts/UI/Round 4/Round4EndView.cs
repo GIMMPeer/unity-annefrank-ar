@@ -55,9 +55,6 @@ public class Round4EndView : View
     {
         base.Show(args);
 
-
-
-
     }
 
     // Update is called once per frame

@@ -168,37 +168,60 @@ public sealed class Player : NetworkBehaviour
                 UIManager.Instance.Show<Round1EndView>();
                 break;
             case 4:
-                if (GroupNumber != GameManager.Instance.highestGroup)
-                {
-                    UIManager.Instance.Show<Round2DilemView>();
-                }
-                else
+                if (GroupNumber == GameManager.Instance.highestGroup)
                 {
                     UIManager.Instance.Show<AttackedView>();
                 }
+                else
+                {
+                    UIManager.Instance.Show<WaitView>();
+                }
                 break;
             case 5:
-                UIManager.Instance.Show<Round2EndView>();
+                if (GroupNumber == GameManager.Instance.highestGroup)
+                {
+                    
+                    UIManager.Instance.Show<WaitView>();
+                    
+                }
+                else
+                {
+                  
+                  UIManager.Instance.Show<Round2DilemView>();
+                }
                 break;
             case 6:
-                UIManager.Instance.Show<Round3DilemView>();
+                UIManager.Instance.Show<Round2EndView>();
                 break;
             case 7:
-                UIManager.Instance.Show<Round3EndView>();
+                UIManager.Instance.Show<Round3DilemView>();
                 break;
             case 8:
-                UIManager.Instance.Show<Round4DilemView>();
+                UIManager.Instance.Show<Round3EndView>();
                 break;
             case 9:
+                UIManager.Instance.Show<Round4DilemView>();
+                break;
+            case 10:
                 if (GroupNumber != GameManager.Instance.highestGroup)
                 {
-                    UIManager.Instance.Show<Round4ViolenceView>();
+                    UIManager.Instance.Show<WaitView>();
                 }
                 else {
                     UIManager.Instance.Show<Round4AttackedView>();
                 }
                 break;
-            case 10:
+            case 11:
+                if (GroupNumber != GameManager.Instance.highestGroup)
+                {
+                    UIManager.Instance.Show<Round4ViolenceView>();
+                }
+                else
+                {
+                    UIManager.Instance.Show<WaitView>();
+                }
+                break;
+            case 12:
                 UIManager.Instance.Show<Round4EndView>();
                 break;
         }
