@@ -52,11 +52,15 @@ public sealed class GameManager : NetworkBehaviour
     [field: SyncVar]
     public bool speakUp2 { get; private set; }
 
+    [field: SyncVar]
+    public int endingNum { get; private set; }
+
   
 
     private void Awake()
     {
         Instance = this;
+        endingNum = 0;
     }
 
     
@@ -182,6 +186,7 @@ public sealed class GameManager : NetworkBehaviour
                 break;
 
             case 3: //Round 2 Dilemma
+                int end = 0;
                 for (int i = 0; i < numGroups; i++)
                 {
                     if (i != highestGroup) 
@@ -194,7 +199,14 @@ public sealed class GameManager : NetworkBehaviour
                         else if (groupVotes[i] < 0) {
                         Debug.Log("Got involved. If everyone gets involved the game should end.");
 
-                        //Need end functionality here.
+                            end += 1;
+                            if (end >= numGroups - 1)
+                            {
+
+                                endingNum = 1;
+                                StopGame();
+                            }
+                        //Need end functionality here. Good Ending
                         }
                     }
                 }
@@ -224,7 +236,7 @@ public sealed class GameManager : NetworkBehaviour
                 break;
             case 5:
 
-                //If discrimLaw = true then highest group(otherized group) will multiply points by 0.5
+                
 
                
                 for (int i = 0; i < numGroups; i += 2)
@@ -263,6 +275,8 @@ public sealed class GameManager : NetworkBehaviour
                 break;
                 
             case 6: //Round 4 Violence & Attacked Views
+
+                int end1 = 0;
                 for (int i = 0; i < numGroups; i++)
                 {
 
@@ -272,16 +286,56 @@ public sealed class GameManager : NetworkBehaviour
                         {
                             speakUp2 = true;
                             groupScores[i] -= 5;
-                            //This should add some text that tells the other group that what they are hearing is not true.
+                            
                         }
                     }
                     else if (groupVotes[i] < 0)
                     {
                         groupScores[i] -= 10;
+                        end1++;
+                        if (end1 >= numGroups - 1)
+                        {
+                            endingNum = 1;
+                            StopGame();
+                        }
                         //Need end functionality here.
+                        //Good Ending
                     }
                 }
                 
+                break;
+            case 7: //Round 5 Elimination View
+                int end2 = 0;
+                int end3 = 0;
+                for (int i = 0; i < numGroups; i++)
+                {
+                    if (i != highestGroup)
+                    {
+                        if (groupVotes[i] >= 0)
+                        {
+                            
+                            //Bad Ending if all of them voted for it
+                            end2++;
+                            if (end2 >= numGroups / 2)
+                            {
+
+                                endingNum = 3;
+                                StopGame();
+                            }
+                        }
+                        else if (groupVotes[i] < 0)
+                        {
+                            end3++;
+                            //Nuetral Ending where the group doesn't get eliminated. 
+                            if (end3 > numGroups / 2)
+                            {
+                                
+                                endingNum = 2;
+                                StopGame();
+                            }
+                        }
+                    }
+                }
                 break;
             default:
                 print("ERR: Outcast");
