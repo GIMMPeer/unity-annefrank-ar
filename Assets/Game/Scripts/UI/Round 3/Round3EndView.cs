@@ -9,6 +9,8 @@ using UnityEngine.UI;
 public class Round3EndView : View {
     [SerializeField]
     private TextMeshProUGUI[] groupScoreText;
+    [SerializeField]
+    private TextMeshProUGUI[] groupPropText;
 
     [SerializeField]
     private Button toggleReadyButton;
@@ -30,6 +32,10 @@ public class Round3EndView : View {
 
         for (int i = 0; i < GameManager.Instance.numGroups; i++) {
             groupScoreText[i].text = $"Group {i + 1} Score: {GameManager.Instance.groupScores[i]}";
+            if (i == GameManager.Instance.highestGroup)
+            {
+                groupPropText[i].gameObject.SetActive(true);
+            }
         }
     }
 
