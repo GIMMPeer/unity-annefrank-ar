@@ -8,6 +8,19 @@ using UnityEngine.UI;
 
 public class Round1EndView : View
 {
+
+    [SerializeField]
+    private TextMeshProUGUI group1Score;
+
+    [SerializeField]
+    private TextMeshProUGUI group2Score;
+
+    [SerializeField]
+    private TextMeshProUGUI group1Prop;
+
+    [SerializeField]
+    private TextMeshProUGUI group2Prop;
+
     [SerializeField]
     private TextMeshProUGUI[] groupPropText;
     [SerializeField]
@@ -31,6 +44,7 @@ public class Round1EndView : View
             continueButton.gameObject.SetActive(false);
         }
 
+        Debug.Log("Highest Group End: " + GameManager.Instance.highestGroup);
         for (int i = 0; i < GameManager.Instance.numGroups; i++) {
             groupScoreText[i].text = $"Group {i+1} Score: {GameManager.Instance.groupScores[i]}";
             if (i == GameManager.Instance.highestGroup) {
