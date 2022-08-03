@@ -42,11 +42,28 @@ public sealed class GameManager : NetworkBehaviour
     [field: SyncVar]
     public bool discrimLaw { get; private set; } = false;
 
+    [field: SyncVar]
+    public bool speakUp1 {
+        get; 
+       
+        private set; 
+    }
+
+    [field: SyncVar]
+    public bool speakUp2 { get; private set; }
+
+    [field: SyncVar]
+    public int endingNum { get; private set; }
+
+  
+
     private void Awake()
     {
         Instance = this;
+        endingNum = 0;
     }
 
+    
     void FixedUpdate() {
         if (!IsServer)
             return;
@@ -99,6 +116,7 @@ public sealed class GameManager : NetworkBehaviour
                 CheckVotes(players[i]);
             }
             AssignScores();
+            
 
         }
     }
@@ -113,8 +131,9 @@ public sealed class GameManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void AssignScores()
     {
+        Debug.Log("Round Number is " + roundNum);
         switch (roundNum) {
-            case 1:
+            case 1: //First Dilemma
                 for (int i = 0; i < numGroups; i += 2) {
                     if (groupVotes[i] >= 0 && groupVotes[i + 1] >= 0) //Compete
                     {
@@ -141,30 +160,58 @@ public sealed class GameManager : NetworkBehaviour
 
                 break;
 
-            case 2:
+            case 2:  //Attacked View
 
                 for (int i = 0; i < numGroups; i++) {
 
                     if (i == highestGroup) {
 
-                        if (groupVotes[i] >= 0)
+                        if (groupVotes[i] > 0)
                         {
-                            groupScores[i] -= 1;
-                        }
-                        else if (groupVotes[i] < 0){
                             groupScores[i] -= 5;
+                            speakUp1 = true;
+                           
                         }
-                    } else if (groupVotes[i] >= 0) {
-                        groupScores[i] += 10;
+                        else if (groupVotes[i] <= 0){
+                            
+                            speakUp1 = false;
+                       
+                        }
+                    } 
+                        
+                     
+                }
+                //Added because we have two rounds in round 2
+                roundNum += 1;
+                break;
+
+            case 3: //Round 2 Dilemma
+                int end = 0;
+                for (int i = 0; i < numGroups; i++)
+                {
+                    if (i != highestGroup) 
+                    {
+                        if (groupVotes[i] >= 0)
+                        { 
+                            groupScores[i] += 10;
                         Debug.Log("Do nothing");
-                    } else if (groupVotes[i] < 0) {
+                        }
+                        else if (groupVotes[i] < 0) {
                         Debug.Log("Got involved. If everyone gets involved the game should end.");
 
-                        //Need end functionality here.
+                            end += 1;
+                            if (end >= numGroups - 1)
+                            {
+
+                                endingNum = 1;
+                                StopGame();
+                            }
+                        //Need end functionality here. Good Ending
+                        }
                     }
                 }
-                break;
-            case 3:
+                    break;
+            case 4:
                 int votesFor = 0;
                 int votesAgainst = 0;
                 for (int i = 0; i < numGroups; i++) {
@@ -187,9 +234,108 @@ public sealed class GameManager : NetworkBehaviour
                     Debug.Log("Stop Game");
                 }
                 break;
-            case 4:
+            case 5:
 
-                //If discrimLaw = true then highest group(otherized group) will multiply points by 0.5
+                
+
+               
+                for (int i = 0; i < numGroups; i += 2)
+                {
+
+                    if (groupVotes[i] >= 0 && groupVotes[i + 1] >= 0) //Compete
+                    {
+                        groupScores[i] += 2;
+                        groupScores[i + 1] += 2;
+                        
+                        
+                    }
+                    else if (groupVotes[i] < 0 && groupVotes[i + 1] < 0) //Cooperate
+                    {
+                        groupScores[i] += 1;
+                        groupScores[i + 1] += 1;
+                    }
+                    else if (groupVotes[i] < 0 && groupVotes[i + 1] > 0)//higher team comp
+                    {
+                        groupScores[i] += 1;
+                        groupScores[i + 1] += 4;
+                    }
+                    else if (groupVotes[i] > 0 && groupVotes[i + 1] < 0)//lower team comp
+                    {
+                        groupScores[i] += 4;
+                        groupScores[i + 1] += 1;
+                    }
+                    else
+                    {
+                        Debug.Log("Error");
+                    }
+                }
+                if(discrimLaw)
+                    groupScores[highestGroup] -= 2;
+                roundNum += 1;
+                break;
+                
+            case 6: //Round 4 Violence & Attacked Views
+
+                int end1 = 0;
+                for (int i = 0; i < numGroups; i++)
+                {
+
+                    if (i == highestGroup)
+                    {
+                        if (groupVotes[i] > 0)
+                        {
+                            speakUp2 = true;
+                            groupScores[i] -= 5;
+                            
+                        }
+                    }
+                    else if (groupVotes[i] < 0)
+                    {
+                        groupScores[i] -= 10;
+                        end1++;
+                        if (end1 >= numGroups - 1)
+                        {
+                            endingNum = 1;
+                            StopGame();
+                        }
+                        //Need end functionality here.
+                        //Good Ending
+                    }
+                }
+                
+                break;
+            case 7: //Round 5 Elimination View
+                int end2 = 0;
+                int end3 = 0;
+                for (int i = 0; i < numGroups; i++)
+                {
+                    if (i != highestGroup)
+                    {
+                        if (groupVotes[i] >= 0)
+                        {
+                            
+                            //Bad Ending if all of them voted for it
+                            end2++;
+                            if (end2 >= numGroups / 2)
+                            {
+
+                                endingNum = 3;
+                                StopGame();
+                            }
+                        }
+                        else if (groupVotes[i] < 0)
+                        {
+                            end3++;
+                            //Nuetral Ending where the group doesn't get eliminated. 
+                            if (end3 > numGroups / 2)
+                            {
+                                
+                                endingNum = 2;
+                                StopGame();
+                            }
+                        }
+                    }
+                }
                 break;
             default:
                 print("ERR: Outcast");
@@ -219,6 +365,8 @@ public sealed class GameManager : NetworkBehaviour
             }
         }
         highestGroup = highestGroupList[Random.Range(0, highestGroupList.Count)];
+
+        
     }
 
     public void ResetAll()
@@ -244,6 +392,12 @@ public sealed class GameManager : NetworkBehaviour
         {
             players[i].StopGame();
         }
+    }
+
+    private void Update()
+    {
+
+        
     }
 
 }

@@ -5,45 +5,32 @@ using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using System.Linq;
 using UnityEngine.UI;
-
-
-public class AttackedView : View
+public class Round4DilemView : View
 {
-    
-
+    [SerializeField]
+    private TextMeshProUGUI dilemmaText;
 
     [SerializeField]
-    private Button fightBack;
+    private Button coopButton;
 
     [SerializeField]
-    private Button stayDown;
+    private Button compButton;
+
 
     public override void Initialize()
     {
         base.Initialize();
-        fightBack.onClick.AddListener(() => {
 
-            Player.Instance.HasVoted = !Player.Instance.HasVoted;
+        coopButton.onClick.AddListener(() => {
             Player.Instance.VoteStatus = -1;
-
+            Player.Instance.HasVoted = true;
             GameManager.Instance.ReadyCheck();
-            
-            });
-
-        stayDown.onClick.AddListener(() => {
-
-            Player.Instance.HasVoted = !Player.Instance.HasVoted;
-            Player.Instance.VoteStatus = 1;
-
-            GameManager.Instance.ReadyCheck();
-
         });
-
-
+        compButton.onClick.AddListener(() =>
+        {
+            Player.Instance.VoteStatus = 1;
+            Player.Instance.HasVoted = true;
+            GameManager.Instance.ReadyCheck();
+        });
     }
-
-    private void Update()
-    {
-    }
-
 }

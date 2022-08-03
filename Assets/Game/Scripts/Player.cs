@@ -45,6 +45,14 @@ public sealed class Player : NetworkBehaviour
         [ServerRpc(RequireOwnership = false)]
         set;
     }
+    [field: SyncVar]
+    public bool stopGame
+    {
+        get;
+
+        [ServerRpc(RequireOwnership = false)]
+        set;
+    } = false;
 
     [field: SyncVar]
     public bool HasVoted
@@ -137,8 +145,8 @@ public sealed class Player : NetworkBehaviour
 
     [Server]
     public void StopGame()
-    { 
-    
+    {
+        stopGame = true;
     }
 
 
@@ -151,41 +159,109 @@ public sealed class Player : NetworkBehaviour
         if (!IsOwner) return;
 
 
-        switch (GameManager.Instance.viewNum)
+        if (stopGame)
         {
-            case 0:
-                
-                break;
-            case 1:
-                UIManager.Instance.Show<LobbyView>();
-               
-                break;
-            case 2:
-                UIManager.Instance.Show<Round1DilemView>();
-                
-                break;
-            case 3:
-                UIManager.Instance.Show<Round1EndView>();
-                break;
-            case 4:
-                if (GroupNumber != GameManager.Instance.highestGroup)
-                {
-                    UIManager.Instance.Show<Round2DilemView>();
-                }
-                else
-                {
-                    UIManager.Instance.Show<AttackedView>();
-                }
-                break;
-            case 5:
-                UIManager.Instance.Show<Round2EndView>();
-                break;
-            case 6:
-                UIManager.Instance.Show<Round3DilemView>();
-                break;
-            case 7:
-                UIManager.Instance.Show<Round3EndView>();
-                break;
+            switch (GameManager.Instance.endingNum)
+            {
+                case 1:
+                    UIManager.Instance.Show<GoodEnding>();
+                    break;
+                case 2:
+                    UIManager.Instance.Show<NeutralEnding>();
+                    break;
+                case 3:
+                    UIManager.Instance.Show<BadEnding>();
+                    break;
+            }
+        }
+
+        if (!stopGame)
+        {
+            switch (GameManager.Instance.viewNum)
+            {
+                case 0:
+
+                    break;
+                case 1:
+                    UIManager.Instance.Show<LobbyView>();
+
+                    break;
+                case 2:
+                    UIManager.Instance.Show<Round1DilemView>();
+
+                    break;
+                case 3:
+                    UIManager.Instance.Show<Round1EndView>();
+                    break;
+                case 4:
+                    if (GroupNumber == GameManager.Instance.highestGroup)
+                    {
+                        UIManager.Instance.Show<AttackedView>();
+                    }
+                    else
+                    {
+                        UIManager.Instance.Show<WaitView>();
+                    }
+                    break;
+                case 5:
+                    if (GroupNumber == GameManager.Instance.highestGroup)
+                    {
+
+                        UIManager.Instance.Show<WaitView>();
+
+                    }
+                    else
+                    {
+
+                        UIManager.Instance.Show<Round2DilemView>();
+                    }
+                    break;
+                case 6:
+                    UIManager.Instance.Show<Round2EndView>();
+                    break;
+                case 7:
+                    UIManager.Instance.Show<Round3DilemView>();
+                    break;
+                case 8:
+                    UIManager.Instance.Show<Round3EndView>();
+                    break;
+                case 9:
+                    UIManager.Instance.Show<Round4DilemView>();
+                    break;
+                case 10:
+                    if (GroupNumber != GameManager.Instance.highestGroup)
+                    {
+                        UIManager.Instance.Show<WaitView>();
+                    }
+                    else
+                    {
+                        UIManager.Instance.Show<Round4AttackedView>();
+                    }
+                    break;
+                case 11:
+                    if (GroupNumber != GameManager.Instance.highestGroup)
+                    {
+                        UIManager.Instance.Show<Round4ViolenceView>();
+                    }
+                    else
+                    {
+                        UIManager.Instance.Show<WaitView>();
+                    }
+                    break;
+                case 12:
+                    UIManager.Instance.Show<Round4EndView>();
+                    break;
+                case 13:
+                    if (GroupNumber != GameManager.Instance.highestGroup)
+                    {
+                        UIManager.Instance.Show<Round5EliminationView>();
+                    }
+                    else
+                    {
+                        UIManager.Instance.Show<WaitView>();
+                    }
+                    break;
+            }
         }
         
         
