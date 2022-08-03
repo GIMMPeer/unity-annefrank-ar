@@ -16,6 +16,9 @@ public sealed class GameManager : NetworkBehaviour
 
     private int[] groupVotes;
 
+    [SyncObject]
+    public readonly SyncList<int> groupTally = new SyncList<int>();
+
 
     [SyncObject]
     public readonly SyncList<int> groupScores = new SyncList<int>();
@@ -86,8 +89,10 @@ public sealed class GameManager : NetworkBehaviour
 
         // Instantiate vote and score lists based off number of players
         groupVotes = new int[numPlayers];
+        
         for (int i = 0; i < numGroups; i++) {
             groupScores.Add(0);
+            groupTally.Add(0);
         }
 
         // Sort players into groups
@@ -103,6 +108,12 @@ public sealed class GameManager : NetworkBehaviour
 
     [ServerRpc(RequireOwnership = false)]
     public void ReadyCheck() {
+
+        for (int i = 0; i < players.Count; i++)
+        {
+            TallyVotes(players[i]);
+        }
+        
         bool readyStartRound = players.All(player => player.IsReady);
 
         if (readyStartRound) {
@@ -119,6 +130,14 @@ public sealed class GameManager : NetworkBehaviour
             
 
         }
+    }
+    
+
+    [ServerRpc(RequireOwnership = false)]
+    public void TallyVotes(Player player)
+    {
+        var playerGroupNum = player.GroupNumber;
+        groupTally[playerGroupNum] += player.VoteStatus;
     }
 
     [ServerRpc(RequireOwnership = false)]

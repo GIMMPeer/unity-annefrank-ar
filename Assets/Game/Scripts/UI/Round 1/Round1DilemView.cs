@@ -13,11 +13,17 @@ public class Round1DilemView : View
     private TextMeshProUGUI dilemmaText;
 
     [SerializeField]
+    private TextMeshProUGUI confessVotesText;
+    
+
+
+    [SerializeField]
     private Button coopButton;
 
     [SerializeField]
     private Button compButton;
 
+   
 
     public override void Initialize()
     {
@@ -34,6 +40,8 @@ public class Round1DilemView : View
             Player.Instance.HasVoted = true;
             GameManager.Instance.ReadyCheck();
         });
+
+        
     }
 
     /*public override void Show(object args = null)
@@ -44,6 +52,10 @@ public class Round1DilemView : View
     // Update is called once per frame
     void Update()
     {
-        
+
+        int tallyGroup = Player.Instance.GroupNumber;
+
+        confessVotesText.text = $"{GameManager.Instance.groupTally[tallyGroup]}";
+       
     }
 }

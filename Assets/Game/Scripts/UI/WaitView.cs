@@ -19,7 +19,7 @@ public class WaitView : View
     {
         base.Initialize();
         toggleReadyButton.onClick.AddListener(() => {
-            Player.Instance.HasVoted = !Player.Instance.HasVoted;
+            Player.Instance.HasVoted = true;
             GameManager.Instance.ReadyCheck();
         });
 
