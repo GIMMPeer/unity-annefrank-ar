@@ -6,25 +6,31 @@ using System.Collections.Generic;
 using UnityEngine;
 using FishNet.Connection;
 
-public sealed class GameManager : NetworkBehaviour {
-    public static GameManager Instance { get; private set; }
+public sealed class GameManagerOld : NetworkBehaviour
+{/*
+    public static GameManagerOld Instance { get; private set; }
 
 
     [SyncObject]
     public readonly SyncList<Player> players = new SyncList<Player>();
 
+    //private int[] groupVotes;
+
+    //[SyncObject]
+    //public readonly SyncList<int> groupScores = new SyncList<int>();
+
     [SyncObject]
     public readonly SyncList<Group> groups = new SyncList<Group>();
 
     [SyncObject]
-    public readonly SyncList<Group> orderedGroups = new SyncList<Group>();
+    public readonly SyncList<int> orderedScores = new SyncList<int>();
 
     [field: SerializeField]
     [field: SyncVar]
     public bool CanStart { get; private set; }
 
     [field: SyncVar]
-    public int otherizedGroup { get; private set; }
+    public int highestGroup { get; private set; }
 
     public bool r1Active { get; private set; }
 
@@ -42,9 +48,9 @@ public sealed class GameManager : NetworkBehaviour {
 
     [field: SyncVar]
     public bool speakUp1 {
-        get;
-
-        private set;
+        get; 
+       
+        private set; 
     }
 
     [field: SyncVar]
@@ -53,12 +59,13 @@ public sealed class GameManager : NetworkBehaviour {
     [field: SyncVar]
     public int endingNum { get; private set; }
 
-    private void Awake() {
+    private void Awake()
+    {
         Instance = this;
         endingNum = 0;
     }
 
-
+    
     void FixedUpdate() {
         if (!IsServer)
             return;
@@ -80,8 +87,9 @@ public sealed class GameManager : NetworkBehaviour {
         }
 
         // Instantiate vote and score lists based off number of players
+        //groupVotes = new int[numPlayers];
         for (int i = 0; i < numGroups; i++) {
-            groups.Add(new Group(i + 1, i));
+            groups.Add(new Group(i+1, i));
         }
 
         // Sort players into groups
@@ -114,32 +122,43 @@ public sealed class GameManager : NetworkBehaviour {
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void CheckVotes(Player player) {
+    public void CheckVotes(Player player)
+    {
         var playerGroupNum = player.GroupNumber;
-        groups[playerGroupNum].votes += player.VoteStatus;
+        //groupVotes[playerGroupNum] += player.VoteStatus;
+        groups[playerGroupNum].votes += player.VoteStatus
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void AssignScores() {
+    public void AssignScores()
+    {
         Debug.Log("Round Number is " + roundNum);
         switch (roundNum) {
             case 1: //First Dilemma
                 for (int i = 0; i < numGroups; i += 2) {
-                    if (groups[i].votes >= 0 && groups[i + 1].votes >= 0) //Compete
+                    if (groupVotes[i] >= 0 && groupVotes[i + 1] >= 0) //Compete
                     {
+                        //groupScores[i] += 2;
+                        //groupScores[i + 1] += 2;
                         groups[i].score += 2;
                         groups[i + 1].score += 2;
 
-                    } else if (groups[i].votes < 0 && groups[i + 1].votes < 0) //Cooperate
+                    } else if (groupVotes[i] < 0 && groupVotes[i + 1] < 0) //Cooperate
                       {
+                        //groupScores[i] += 1;
+                        //groupScores[i + 1] += 1;
                         groups[i].score += 1;
                         groups[i + 1].score += 1;
-                    } else if (groups[i].votes < 0 && groups[i + 1].votes > 0)//higher team comp
+                    } else if (groupVotes[i] < 0 && groupVotes[i + 1] > 0)//higher team comp
                       {
+                        //groupScores[i] += 1;
+                        //groupScores[i + 1] += 4;
                         groups[i].score += 1;
                         groups[i + 1].score += 4;
-                    } else if (groups[i].votes > 0 && groups[i + 1].votes < 0)//lower team comp
+                    } else if (groupVotes[i] > 0 && groupVotes[i + 1] < 0)//lower team comp
                       {
+                        //groupScores[i] += 4;
+                        //groupScores[i + 1] += 1;
                         groups[i].score += 4;
                         groups[i + 1].score += 1;
                     } else {
@@ -155,16 +174,25 @@ public sealed class GameManager : NetworkBehaviour {
 
                 for (int i = 0; i < numGroups; i++) {
 
-                    if (groups[i].isOtherized) {
-                        if (groups[i].votes > 0) {
-                            groups[i].score -= 5;
+                    if (i == highestGroup) {
+
+                        if (groupVotes[i] > 0)
+                        {
+                            //groupScores[i] -= 5;
+                            groups[i].changeScore(-5);
                             speakUp1 = true;
-                        } else {
-                            speakUp1 = false;
+                           
                         }
-                    }
-
-
+                        else if (groupVotes[i] <= 0){
+                            speakUp1 = false;
+                       
+                        }
+                        if (groups[i].vote > 0) {
+                            groups[i].score -= 5;
+                        }
+                    } 
+                        
+                     
                 }
                 //Added because we have two rounds in round 2
                 roundNum += 1;
@@ -172,30 +200,39 @@ public sealed class GameManager : NetworkBehaviour {
 
             case 3: //Round 2 Dilemma
                 int end = 0;
-                for (int i = 0; i < numGroups; i++) {
-                    if (!groups[i].isOtherized) {
-                        if (groups[i].votes >= 0) {
-                            groups[i].score += 10;
-                        } else {
+                for (int i = 0; i < numGroups; i++)
+                {
+                    if (i != highestGroup) 
+                    {
+                        if (groupVotes[i] >= 0)
+                        { 
+                            groupScores[i] += 10;
+                        Debug.Log("Do nothing");
+                        }
+                        else if (groupVotes[i] < 0) {
+                        Debug.Log("Got involved. If everyone gets involved the game should end.");
+
                             end += 1;
-                            if (end >= numGroups - 1) {
+                            if (end >= numGroups - 1)
+                            {
 
                                 endingNum = 1;
                                 StopGame();
                             }
-                            //Need end functionality here. Good Ending
+                        //Need end functionality here. Good Ending
                         }
                     }
+                    
                 }
-                break;
+                    break;
             case 4:
                 int votesFor = 0;
                 int votesAgainst = 0;
                 for (int i = 0; i < numGroups; i++) {
                     if (groups[i].votes >= 0) {
                         votesFor++;
-                        if (!groups[i].isOtherized) {
-                            groups[i].score += 5;
+                        if (!groups[i].otherized) {
+                            groupScores[i] += 5;
                         }
                     } else {
                         votesAgainst++;
@@ -210,50 +247,62 @@ public sealed class GameManager : NetworkBehaviour {
                 }
                 break;
             case 5:
+               
+                for (int i = 0; i < numGroups; i += 2)
+                {
 
-                for (int i = 0; i < numGroups; i += 2) {
-
-                    if (groups[i].votes >= 0 && groups[i + 1].votes >= 0) //Compete
+                    if (groupVotes[i] >= 0 && groupVotes[i + 1] >= 0) //Compete
                     {
-                        groups[i].score += 2;
-                        groups[i + 1].score += 2;
-
-                    } else if (groups[i].votes < 0 && groups[i + 1].votes < 0) //Cooperate
-                      {
-                        groups[i].score += 1;
-                        groups[i + 1].score += 1;
-                    } else if (groups[i].votes < 0 && groups[i + 1].votes > 0)//higher team comp
-                      {
-                        groups[i].score += 1;
-                        groups[i + 1].score += 4;
-                    } else if (groups[i].votes > 0 && groups[i + 1].votes < 0)//lower team comp
-                      {
-                        groups[i].score += 4;
-                        groups[i + 1].score += 1;
-                    } else {
+                        groupScores[i] += 2;
+                        groupScores[i + 1] += 2;
+                        
+                    }
+                    else if (groupVotes[i] < 0 && groupVotes[i + 1] < 0) //Cooperate
+                    {
+                        groupScores[i] += 1;
+                        groupScores[i + 1] += 1;
+                    }
+                    else if (groupVotes[i] < 0 && groupVotes[i + 1] > 0)//higher team comp
+                    {
+                        groupScores[i] += 1;
+                        groupScores[i + 1] += 4;
+                    }
+                    else if (groupVotes[i] > 0 && groupVotes[i + 1] < 0)//lower team comp
+                    {
+                        groupScores[i] += 4;
+                        groupScores[i + 1] += 1;
+                    }
+                    else
+                    {
                         Debug.Log("Error");
                     }
                 }
-                if (discrimLaw)
-                    groups[otherizedGroup].score -= 2;
+                if(discrimLaw)
+                    groupScores[highestGroup] -= 2;
                 roundNum += 1;
                 break;
-
+                
             case 6: //Round 4 Violence & Attacked Views
 
                 int end1 = 0;
-                for (int i = 0; i < numGroups; i++) {
+                for (int i = 0; i < numGroups; i++)
+                {
 
-                    if (groups[i].isOtherized) {
-                        if (groups[i].votes > 0) {
+                    if (i == highestGroup)
+                    {
+                        if (groupVotes[i] > 0)
+                        {
                             speakUp2 = true;
-                            groups[i].score -= 5;
-
+                            groupScores[i] -= 5;
+                            
                         }
-                    } else if (groups[i].votes < 0) {
-                        groups[i].score -= 10;
+                    }
+                    else if (groupVotes[i] < 0)
+                    {
+                        groupScores[i] -= 10;
                         end1++;
-                        if (end1 >= numGroups - 1) {
+                        if (end1 >= numGroups - 1)
+                        {
                             endingNum = 1;
                             StopGame();
                         }
@@ -261,27 +310,34 @@ public sealed class GameManager : NetworkBehaviour {
                         //Good Ending
                     }
                 }
-
+                
                 break;
             case 7: //Round 5 Elimination View
                 int end2 = 0;
                 int end3 = 0;
-                for (int i = 0; i < numGroups; i++) {
-                    if (!groups[i].isOtherized) {
-                        if (groups[i].votes >= 0) {
-
+                for (int i = 0; i < numGroups; i++)
+                {
+                    if (i != highestGroup)
+                    {
+                        if (groupVotes[i] >= 0)
+                        {
+                            
                             //Bad Ending if all of them voted for it
                             end2++;
-                            if (end2 >= numGroups / 2) {
+                            if (end2 >= numGroups / 2)
+                            {
 
                                 endingNum = 3;
                                 StopGame();
                             }
-                        } else if (groups[i].votes < 0) {
+                        }
+                        else if (groupVotes[i] < 0)
+                        {
                             end3++;
                             //Nuetral Ending where the group doesn't get eliminated. 
-                            if (end3 > numGroups / 2) {
-
+                            if (end3 > numGroups / 2)
+                            {
+                                
                                 endingNum = 2;
                                 StopGame();
                             }
@@ -293,35 +349,59 @@ public sealed class GameManager : NetworkBehaviour {
                 print("ERR: Outcast");
                 break;
         }
-
+        
         viewNum += 1;
         ResetAll();
     }
 
     public void RankScores() {
-        List<Group> unorderedGroups = new List<Group>();
         // Copy scores to new list
-        for (int i = 0; i < groups.Count; i++) {
-            unorderedGroups.Add(groups[i]);
+        //orderedScores = new SyncList<int>(groupScores);
+        for (int i = 0; i < groupScores.Count; i++) {
+            orderedScores.Add(groupScores[i]);
         }
 
-        foreach (Group g in groups) {
+        for (int i = 0; i < orderedScores.Count; i++) {
             int highestScore = -1;
             int highestGroup = -1;
-            for (int i = 0; i < unorderedGroups.Count; i++) {
-                if (unorderedGroups[i].score > highestScore) {
-                    highestScore = unorderedGroups[i].score;
-                    highestGroup = i;
+            for (int j = i; j > orderedScores.Count; j++) {
+                if (orderedScores[j] > highestScore) {
+                    highestScore = orderedScores[j];
+                    highestGroup = j;
                 }
             }
-            orderedGroups.Add(unorderedGroups[highestGroup]);
-            unorderedGroups.RemoveAt(highestGroup);
+            int tempStore = orderedScores[i];
+            orderedScores[i] = orderedScores[highestGroup];
+            orderedScores[highestGroup] = tempStore;
+            
         }
+        string orderedString = "";
+        for (int k = 0; k < orderedScores.Count; k++) {
+            orderedString += orderedScores[k] + ", ";
+        }
+        print(orderedString);
     }
 
     public void CheckHighest()
     {
-        otherizedGroup = orderedGroups[0].groupNum;
+        int highestScore = -1;
+        highestGroup = -1;
+
+        List<int> highestGroupList = new List<int>();
+
+        for (int i = 0; i < groupScores.Count; i++)
+        {
+            if (groupScores[i] > highestScore) {
+                highestGroupList.Clear();
+                highestGroupList.Add(i);
+                highestScore = groupScores[i];
+            } else if (groupScores[i] == highestScore) {
+                highestGroupList.Add(i);
+            }
+        }
+        highestGroup = highestGroupList[Random.Range(0, highestGroupList.Count)];
+
+        
     }
 
     public void ResetAll()
@@ -336,7 +416,7 @@ public sealed class GameManager : NetworkBehaviour {
 
         for (int i = 0; i < numGroups; i++)
         {
-            groups[i].votes = 0;
+            groupVotes[i] = 0;
         }
     }
 
@@ -349,4 +429,10 @@ public sealed class GameManager : NetworkBehaviour {
         }
     }
 
+    private void Update()
+    {
+
+        
+    }
+*/
 }

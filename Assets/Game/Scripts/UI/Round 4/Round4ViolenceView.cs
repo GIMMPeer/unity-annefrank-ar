@@ -45,13 +45,13 @@ public class Round4ViolenceView : View
     void Update()
     {
 
-        dilemmaText.text = $" Things have been escalating and the anonymous group is planning to steal away group {GameManager.Instance.highestGroup}'s points! Your group has an option to either stop them, risking several of your own points, or stand back which will keep you safe. Discuss with your group to decide the right course of action.";
+        dilemmaText.text = $" Things have been escalating and the anonymous group is planning to steal away group {GameManager.Instance.otherizedGroup}'s points! Your group has an option to either stop them, risking several of your own points, or stand back which will keep you safe. Discuss with your group to decide the right course of action.";
 
 
         if (GameManager.Instance.speakUp2 == true)
         {
             otherText.gameObject.SetActive(true);
-            otherText.text = $" Group {GameManager.Instance.highestGroup} says that they didn't do anything. This is all a lie that other groups are telling!";
+            otherText.text = $" Group {GameManager.Instance.otherizedGroup} says that they didn't do anything. This is all a lie that other groups are telling!";
         }
         else
         {

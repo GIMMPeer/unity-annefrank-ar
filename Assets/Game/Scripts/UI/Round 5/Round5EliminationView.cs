@@ -36,6 +36,6 @@ public class Round5EliminationView : View
     // Update is called once per frame
     void Update()
     {
-        dilemmaText.text = $"The anonymous group decided enough was enough and proposes to remove group {GameManager.Instance.highestGroup} from the game all together. They state, “To protect the peace and fairness for all groups, we must remove group {GameManager.Instance.highestGroup} to restore it.” What do your group think about their claims? Discuss amongst yourselves.";
+        dilemmaText.text = $"The anonymous group decided enough was enough and proposes to remove group {GameManager.Instance.otherizedGroup} from the game all together. They state, “To protect the peace and fairness for all groups, we must remove group {GameManager.Instance.otherizedGroup} to restore it.” What do your group think about their claims? Discuss amongst yourselves.";
     }
 }

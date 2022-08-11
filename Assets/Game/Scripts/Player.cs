@@ -92,7 +92,7 @@ public sealed class Player : NetworkBehaviour
 
     //Username Generation
     private string[] adjectives = { "Nefarious", "Curious", "Miniscule", "Humongous", "Cute", "Silly", "Majestic", "Indubitable", "Serendipitous", "Magnetic", "Sassy", "Brutal", "Mighty", "Suspicious", "Sneaky", "Hairy"};
-    private string[] nouns = { "Red Panda", "Lemur", "Capybara", "Lion", "Robin", "Tortoise", "Hummingbird", "Snake", "Chipmunk", "Squirrel", "Ferret", "Owl", "Hornbill", "Mouse", "Hampster", "Human", "Dolphin", "Duck", "Fish"};
+    private string[] nouns = { "Red Panda", "Lemur", "Capybara", "Lion", "Robin", "Tortoise", "Hummingbird", "Snake", "Chipmunk", "Squirrel", "Ferret", "Owl", "Hornbill", "Mouse", "Hampster", "Dolphin", "Duck", "Fish"};
 
 
     public override void OnStartServer()
@@ -194,7 +194,8 @@ public sealed class Player : NetworkBehaviour
                     UIManager.Instance.Show<Round1EndView>();
                     break;
                 case 4:
-                    if (GroupNumber == GameManager.Instance.highestGroup)
+                    //if (GroupNumber == GameManager.Instance.highestGroup)
+                    if(GameManager.Instance.groups[GroupNumber].isOtherized)
                     {
                         UIManager.Instance.Show<AttackedView>();
                     }
@@ -204,11 +205,10 @@ public sealed class Player : NetworkBehaviour
                     }
                     break;
                 case 5:
-                    if (GroupNumber == GameManager.Instance.highestGroup)
+                    //if (GroupNumber == GameManager.Instance.highestGroup)
+                    if (GameManager.Instance.groups[GroupNumber].isOtherized)
                     {
-
                         UIManager.Instance.Show<WaitView>();
-
                     }
                     else
                     {
@@ -229,8 +229,8 @@ public sealed class Player : NetworkBehaviour
                     UIManager.Instance.Show<Round4DilemView>();
                     break;
                 case 10:
-                    if (GroupNumber != GameManager.Instance.highestGroup)
-                    {
+                    //if (GroupNumber != GameManager.Instance.highestGroup)
+                    if (!GameManager.Instance.groups[GroupNumber].isOtherized) {
                         UIManager.Instance.Show<WaitView>();
                     }
                     else
@@ -239,7 +239,8 @@ public sealed class Player : NetworkBehaviour
                     }
                     break;
                 case 11:
-                    if (GroupNumber != GameManager.Instance.highestGroup)
+                    //if (GroupNumber != GameManager.Instance.highestGroup)
+                    if (!GameManager.Instance.groups[GroupNumber].isOtherized) 
                     {
                         UIManager.Instance.Show<Round4ViolenceView>();
                     }
@@ -252,7 +253,8 @@ public sealed class Player : NetworkBehaviour
                     UIManager.Instance.Show<Round4EndView>();
                     break;
                 case 13:
-                    if (GroupNumber != GameManager.Instance.highestGroup)
+                    //if (GroupNumber != GameManager.Instance.highestGroup)
+                    if (!GameManager.Instance.groups[GroupNumber].isOtherized) 
                     {
                         UIManager.Instance.Show<Round5EliminationView>();
                     }

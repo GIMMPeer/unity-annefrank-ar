@@ -710,6 +710,7 @@ PlayerSettings:
   webGLDecompressionFallback: 0
   scriptingDefineSymbols:
     Standalone: FISHNET
+    iPhone: FISHNET
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend: {}

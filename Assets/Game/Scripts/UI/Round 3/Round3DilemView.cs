@@ -43,7 +43,7 @@ public class Round3DilemView : View
     void Update()
     {
 
-        dilemmaText.text = $" Since all of the evidence points towards {GameManager.Instance.highestGroup} cheating to gain all of their points. Should we pass a law to limit the points they can get? If you choose to vote yay, you will gain 5 points. If you vote nay, you won't recieve any points." ;
+        dilemmaText.text = $" Since all of the evidence points towards {GameManager.Instance.otherizedGroup} cheating to gain all of their points. Should we pass a law to limit the points they can get? If you choose to vote yay, you will gain 5 points. If you vote nay, you won't recieve any points." ;
 
 
     }
