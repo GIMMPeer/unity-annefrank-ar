@@ -26,7 +26,7 @@ public sealed class GameManager : NetworkBehaviour {
     [field: SyncVar]
     public int otherizedGroup { get; private set; }
 
-    public bool r1Active { get; private set; }
+    //public bool r1Active { get; private set; }
 
     [field: SyncVar]
     public int roundNum { get; private set; } = 0;

@@ -27,6 +27,9 @@ namespace FishNet.CodeGenerating.Helping
             return true;
         }
 
+        internal bool STUPID_AWFUL_NO_GOOD_VERY_BAD_HACK_TO_TEMPORARILY_FIX_FISHNET_TRYING_TO_WRITE_THIS_THING_MORE_THAN_ONCE_HasBeenWrittenAlreadyFlag = false;
+        internal MethodReference STUPID_AWFUL_NO_GOOD_VERY_BAD_HACK_TO_TEMPORARILY_FIX_FISHNET_TRYING_TO_WRITE_THIS_THING_MORE_THAN_ONCE_TheThingThatGetsWrittenMoreThanOnce;
+
         /// <summary>
         /// Generates a writer for objectTypeReference if one does not already exist.
         /// </summary>
@@ -136,6 +139,12 @@ namespace FishNet.CodeGenerating.Helping
         /// <returns></returns>
         private MethodReference CreateNullableWriterMethodReference(TypeReference objectTr, TypeDefinition objectTd)
         {
+            CodegenSession.LogWarning("STUPID AWFUL NO GOOD VERY BAD HACK TO TEMPORARILY FIX FISHNET TRYING TO WRITE THIS THING MORE THAN ONCE HAS NOT BEEN REMOVED YET! DELETE THIS CODE ASAP!");
+            if(STUPID_AWFUL_NO_GOOD_VERY_BAD_HACK_TO_TEMPORARILY_FIX_FISHNET_TRYING_TO_WRITE_THIS_THING_MORE_THAN_ONCE_HasBeenWrittenAlreadyFlag)
+            {
+                return STUPID_AWFUL_NO_GOOD_VERY_BAD_HACK_TO_TEMPORARILY_FIX_FISHNET_TRYING_TO_WRITE_THIS_THING_MORE_THAN_ONCE_TheThingThatGetsWrittenMoreThanOnce;
+            }
+
             GenericInstanceType objectGit = objectTr as GenericInstanceType;
             TypeReference valueTr = objectGit.GenericArguments[0];
 
@@ -186,7 +195,13 @@ namespace FishNet.CodeGenerating.Helping
             processor.Emit(OpCodes.Call, valueWriterMr);
 
             processor.Emit(OpCodes.Ret);
-            return CodegenSession.ImportReference(createdWriterMd);
+
+            // Stupid awful no good very bad code to temporarily fix fishnet
+            var result = CodegenSession.ImportReference(createdWriterMd);
+            STUPID_AWFUL_NO_GOOD_VERY_BAD_HACK_TO_TEMPORARILY_FIX_FISHNET_TRYING_TO_WRITE_THIS_THING_MORE_THAN_ONCE_TheThingThatGetsWrittenMoreThanOnce = result;
+            STUPID_AWFUL_NO_GOOD_VERY_BAD_HACK_TO_TEMPORARILY_FIX_FISHNET_TRYING_TO_WRITE_THIS_THING_MORE_THAN_ONCE_HasBeenWrittenAlreadyFlag = true;
+            return result;
+            // return CodegenSession.ImportReference(createdWriterMd);
         }
 
 

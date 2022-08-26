@@ -7,6 +7,7 @@ namespace FishNet.CodeGenerating.Helping
     {
         public bool Equals(TypeDefinition a, TypeDefinition b)
         {
+            // Suspicious, I think it should use .Equals() - Tavi
             return a.FullName == b.FullName;
         }
 
@@ -21,6 +22,7 @@ namespace FishNet.CodeGenerating.Helping
     {
         public bool Equals(TypeReference a, TypeReference b)
         {
+            // Suspicious, I think it should use .Equals() - Tavi
             return a.FullName == b.FullName;
         }
 
