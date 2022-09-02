@@ -12,13 +12,8 @@ public sealed class ConnectToServer : View
 
     private void Start()
     {
-        hostButton.onClick.AddListener(() =>
-        {
-            InstanceFinder.ServerManager.StartConnection();
-            InstanceFinder.ClientManager.StartConnection();
-        });
+        InstanceFinder.ServerManager.StartConnection();
 
-        connectButton.onClick.AddListener(() => InstanceFinder.ClientManager.StartConnection());
     }
 
     public override void Show(object args = null)
