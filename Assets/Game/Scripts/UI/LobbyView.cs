@@ -43,11 +43,9 @@ public class LobbyView : View
         toggleReadyButton.onClick.AddListener(() => Player.Instance.IsReady = !Player.Instance.IsReady);
         //Player.Instance.SetUsername();
 
-        if (InstanceFinder.IsServer) { 
-            startGameButton.onClick.AddListener(() => GameManager.Instance.ReadyCheck());
-        } else {
-            startGameButton.gameObject.SetActive(false);
-        }
+        
+        startGameButton.onClick.AddListener(() => Player.Instance.CallToReadyCheck());
+       
     }
 
     

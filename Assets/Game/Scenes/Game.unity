@@ -10004,7 +10004,6 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 971726594}
   _networkObjectCache: {fileID: 971726594}
-  <CanStart>k__BackingField: 0
 --- !u!4 &971726596
 Transform:
   m_ObjectHideFlags: 0

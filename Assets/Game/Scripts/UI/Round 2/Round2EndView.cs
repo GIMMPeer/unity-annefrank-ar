@@ -22,13 +22,15 @@ public class Round2EndView : View {
     private Button continueButton;
 
     void OnEnable() {
-        toggleReadyButton.onClick.AddListener(() => Player.Instance.IsReady = !Player.Instance.IsReady);
+        toggleReadyButton.onClick.AddListener(() =>
+        {
+            Player.Instance.IsReady = !Player.Instance.IsReady;
+            Player.Instance.CallToReadyCheck();
+            });
 
-        if (InstanceFinder.IsServer) {
-            continueButton.onClick.AddListener(() => GameManager.Instance.ReadyCheck());
-        } else {
-            continueButton.gameObject.SetActive(false);
-        }
+        
+          continueButton.gameObject.SetActive(false);
+        
 
 
         for (int i = 0; i < GameManager.Instance.numGroups; i++) {

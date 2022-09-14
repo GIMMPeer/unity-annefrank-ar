@@ -10,14 +10,20 @@ public sealed class ConnectToServer : View
     [SerializeField]
     private Button connectButton;
 
+    public bool isServer;
+
+   
     private void Start()
     {
-        hostButton.onClick.AddListener(() =>
+        if (isServer)
         {
             InstanceFinder.ServerManager.StartConnection();
-            InstanceFinder.ClientManager.StartConnection();
-        });
-
+            //InstanceFinder.ClientManager.StartConnection();
+        }
+        else
+        {
+            hostButton.gameObject.SetActive(false);
+        }
         connectButton.onClick.AddListener(() => InstanceFinder.ClientManager.StartConnection());
     }
 

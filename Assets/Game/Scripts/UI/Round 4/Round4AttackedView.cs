@@ -26,7 +26,7 @@ public class Round4AttackedView : View
             Player.Instance.HasVoted = !Player.Instance.HasVoted;
             Player.Instance.VoteStatus = 1;
 
-            GameManager.Instance.ReadyCheck();
+            Player.Instance.CallToReadyCheck();
 
         });
 
@@ -35,7 +35,7 @@ public class Round4AttackedView : View
             Player.Instance.HasVoted = !Player.Instance.HasVoted;
             Player.Instance.VoteStatus = -1;
 
-            GameManager.Instance.ReadyCheck();
+            Player.Instance.CallToReadyCheck();
 
         });
 

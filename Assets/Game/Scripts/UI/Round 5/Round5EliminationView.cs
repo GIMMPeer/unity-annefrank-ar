@@ -23,13 +23,13 @@ public class Round5EliminationView : View
         voteFor.onClick.AddListener(() => {
             Player.Instance.VoteStatus = 1;
             Player.Instance.HasVoted = true;
-            GameManager.Instance.ReadyCheck();
+            Player.Instance.CallToReadyCheck();
         });
         voteAgainst.onClick.AddListener(() =>
         {
             Player.Instance.VoteStatus = -1;
             Player.Instance.HasVoted = true;
-            GameManager.Instance.ReadyCheck();
+            Player.Instance.CallToReadyCheck();
         });
     }
 

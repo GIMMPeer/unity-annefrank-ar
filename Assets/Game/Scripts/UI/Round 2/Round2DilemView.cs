@@ -28,13 +28,13 @@ public class Round2DilemView : View
         helpButton.onClick.AddListener(() => {
             Player.Instance.VoteStatus = -1;
             Player.Instance.HasVoted = true;
-            GameManager.Instance.ReadyCheck();
+            Player.Instance.CallToReadyCheck();
         });
         nothingButton.onClick.AddListener(() =>
         {
             Player.Instance.VoteStatus = 1;
             Player.Instance.HasVoted = true;
-            GameManager.Instance.ReadyCheck();
+            Player.Instance.CallToReadyCheck();
         });
     }
 
