@@ -34,16 +34,21 @@ public class Round1EndView : View
         
         );
 
-       
-           
-       
-            continueButton.gameObject.SetActive(false);
+                   continueButton.gameObject.SetActive(false);
         
 
         for (int i = 0; i < GameManager.Instance.numGroups; i++) {
-            groupScoreText[i].text = $"{i+1}: Group {GameManager.Instance.orderedGroups[i].groupNum}";
-            // Dev Option, comment above line and uncomment below to see group scores alongside rankings
-            // groupScoreText[i].text = $"{i+1}: Group {GameManager.Instance.orderedGroups[i].groupNum}; Score: {GameManager.Instance.orderedGroups[i].score}";
+
+
+            groupScoreText[i].text = $"Group {i + 1} Score: {GameManager.Instance.groupScores[i]}";
+
+            if (i == GameManager.Instance.otherizedGroup)
+            {
+                groupScoreText[i].gameObject.SetActive(true);
+            }
+
+           
+            
         }
     }
 

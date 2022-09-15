@@ -40,9 +40,7 @@ public class LobbyView : View
     {
         base.Initialize();
 
-        toggleReadyButton.onClick.AddListener(() => Player.Instance.IsReady = !Player.Instance.IsReady);
-        //Player.Instance.SetUsername();
-
+        toggleReadyButton.onClick.AddListener(() => Player.Instance.ServerSetIsReady(true));
         
         startGameButton.onClick.AddListener(() => Player.Instance.CallToReadyCheck());
        
