@@ -49,8 +49,6 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 4716816791984249341}
   _networkObjectCache: {fileID: 4716816791984249341}
   <Username>k__BackingField: TestPlayer_1
-  <GroupNumber>k__BackingField: 0
-  <Score>k__BackingField: 0
 --- !u!114 &4716816791984249341
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65,7 +63,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _networkBehaviours:
   - {fileID: 4716816791984249342}
-  - {fileID: 0}
   SceneTransformProperties:
     Position: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0, w: 1}
@@ -73,7 +70,7 @@ MonoBehaviour:
   _isNetworked: 1
   _hasParentNetworkObjectAtEdit: 0
   NetworkObserver: {fileID: 0}
-  _prefabId: 1
+  _prefabId: -1
   _scenePathHash: 0
   _sceneId: 0
   _sceneNetworkObjects:

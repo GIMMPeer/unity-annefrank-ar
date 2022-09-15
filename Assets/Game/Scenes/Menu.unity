@@ -1539,7 +1539,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -25.000122}
+  m_AnchoredPosition: {x: 0, y: -25}
   m_SizeDelta: {x: -672, y: -382}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2005033672
@@ -1556,4 +1556,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hostButton: {fileID: 314995295}
   connectButton: {fileID: 1571999809}
-  isServer: 0

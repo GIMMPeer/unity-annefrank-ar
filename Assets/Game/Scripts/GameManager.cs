@@ -9,18 +9,17 @@ using FishNet.Connection;
 public sealed class GameManager : NetworkBehaviour {
     public static GameManager Instance { get; private set; }
 
-    [field: SerializeField]
+
     [SyncObject]
     public readonly SyncList<Player> players = new SyncList<Player>();
-    [field: SerializeField]
+
     [SyncObject]
     public readonly SyncList<Group> groups = new SyncList<Group>();
-    [field: SerializeField]
+
     [SyncObject]
     public readonly SyncList<Group> orderedGroups = new SyncList<Group>();
-    private bool stopGame;
 
-
+    [field: SerializeField]
     [field: SyncVar]
     public bool CanStart { get; private set; }
 
@@ -60,22 +59,15 @@ public sealed class GameManager : NetworkBehaviour {
     }
 
 
-    [Server]
-    public void CheckToAssignGroups()
-    {
-        bool readyAssignGroups = players.All(player => player.ReadyForTeamCreation);
-
-        if (readyAssignGroups)
-        {
-            CreateAndAssignGroups();
-        }
+    void FixedUpdate() {
+        if (!IsServer)
+            return;
     }
 
     [Server]
     public void CreateAndAssignGroups() {
-        Debug.Log("Player Count " + players.Count);
         int numPlayers = players.Count;
-        
+        int groupNumber = 0;
         // Create Groups based on number of players
         if (numPlayers > 0 && numPlayers <= 8) {
             numGroups = 2;
@@ -93,26 +85,17 @@ public sealed class GameManager : NetworkBehaviour {
         }
 
         // Sort players into groups
-        AssignGroups();
-        viewNum = 1;
-    }
-
-    [ObserversRpc]
-    public void AssignGroups()
-    {
-        int groupNumber = 0;
-        int numPlayers = players.Count;
-        for (int i = 0; i < numPlayers; i++)
-        {
-            if (groupNumber == numGroups)
-            {
+        for (int i = 0; i < numPlayers; i++) {
+            if (groupNumber == numGroups) {
                 groupNumber = 0;
             }
             players[i].GroupNumber = groupNumber;
             groupNumber++;
         }
+        viewNum = 1;
     }
-    [Server]
+
+    [ServerRpc(RequireOwnership = false)]
     public void ReadyCheck() {
         bool readyStartRound = players.All(player => player.IsReady);
 
@@ -122,10 +105,7 @@ public sealed class GameManager : NetworkBehaviour {
             ResetAll();
         }
         bool ReadyEndRound = players.All(player => player.HasVoted);
-        
-
         if (ReadyEndRound) {
-            Debug.Log("All players have voted");
             for (int i = 0; i < players.Count; i++) {
                 CheckVotes(players[i]);
             }
@@ -133,21 +113,13 @@ public sealed class GameManager : NetworkBehaviour {
         }
     }
 
-    [ObserversRpc]
-    public void SetPlayerStatus(int status, bool hasvoted)
-    {
-        Player.Instance.VoteStatus = status;
-
-        Player.Instance.HasVoted = hasvoted;
-    }
-
-    [Server]
+    [ServerRpc(RequireOwnership = false)]
     public void CheckVotes(Player player) {
         var playerGroupNum = player.GroupNumber;
         groups[playerGroupNum].votes += player.VoteStatus;
     }
 
-    [Server]
+    [ServerRpc(RequireOwnership = false)]
     public void AssignScores() {
         Debug.Log("Round Number is " + roundNum);
         switch (roundNum) {
@@ -326,7 +298,6 @@ public sealed class GameManager : NetworkBehaviour {
         ResetAll();
     }
 
-    [Server]
     public void RankScores() {
         List<Group> unorderedGroups = new List<Group>();
         // Copy scores to new list
@@ -348,13 +319,11 @@ public sealed class GameManager : NetworkBehaviour {
         }
     }
 
-    [ObserversRpc]
     public void CheckHighest()
     {
         otherizedGroup = orderedGroups[0].groupNum;
     }
 
-    [ObserversRpc]
     public void ResetAll()
     {
         //Is Ready 
@@ -371,10 +340,9 @@ public sealed class GameManager : NetworkBehaviour {
         }
     }
 
-    [ObserversRpc]
+    [Server]
     public void StopGame()
     {
-        Instance.ServerManager.StopConnection(true);
         for (int i = 0; i < players.Count; i++)
         {
             players[i].StopGame();

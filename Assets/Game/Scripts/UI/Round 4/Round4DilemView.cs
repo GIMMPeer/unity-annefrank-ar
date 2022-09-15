@@ -24,13 +24,13 @@ public class Round4DilemView : View
         coopButton.onClick.AddListener(() => {
             Player.Instance.VoteStatus = -1;
             Player.Instance.HasVoted = true;
-            Player.Instance.CallToReadyCheck();
+            GameManager.Instance.ReadyCheck();
         });
         compButton.onClick.AddListener(() =>
         {
             Player.Instance.VoteStatus = 1;
             Player.Instance.HasVoted = true;
-            Player.Instance.CallToReadyCheck();
+            GameManager.Instance.ReadyCheck();
         });
     }
 }

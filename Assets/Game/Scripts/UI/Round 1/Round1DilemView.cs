@@ -24,18 +24,15 @@ public class Round1DilemView : View
         base.Initialize();
 
         coopButton.onClick.AddListener(() => {
-
-            Player.Instance.CallToSetStatus(-1, true);
-            //Player.Instance.VoteStatus = -1;
-            //Player.Instance.HasVoted = true;
-            Player.Instance.CallToReadyCheck();
+            Player.Instance.VoteStatus = -1;
+            Player.Instance.HasVoted = true;
+            GameManager.Instance.ReadyCheck();
         });
         compButton.onClick.AddListener(() =>
         {
-            Player.Instance.CallToSetStatus(1, true);
-            //Player.Instance.VoteStatus = 1;
-            //Player.Instance.HasVoted = true;
-            Player.Instance.CallToReadyCheck();
+            Player.Instance.VoteStatus = 1;
+            Player.Instance.HasVoted = true;
+            GameManager.Instance.ReadyCheck();
         });
     }
 

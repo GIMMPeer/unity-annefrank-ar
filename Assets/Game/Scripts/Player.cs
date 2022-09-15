@@ -63,15 +63,6 @@ public sealed class Player : NetworkBehaviour
         set;
     } = false;
 
-    [field: SyncVar]
-    public bool ReadyForTeamCreation
-    {
-        get;
-
-        [ServerRpc(RequireOwnership = false)]
-        set;
-    } = false;
-
 
     [field: SyncVar]
     public bool IsReady
@@ -90,9 +81,9 @@ public sealed class Player : NetworkBehaviour
         [ServerRpc(RequireOwnership = false)]
         set;
     }
+  
 
- 
-
+  
 
     /*
     [SyncObject]
@@ -109,19 +100,15 @@ public sealed class Player : NetworkBehaviour
         base.OnStartServer();
 
        
-       GameManager.Instance.players.Add(this);
-        
+        GameManager.Instance.players.Add(this);
         
     }
     public override void OnStopServer()
     {
         base.OnStopServer();
 
-
-       
-       GameManager.Instance.players.Remove(this);
         
-        
+        GameManager.Instance.players.Remove(this);
         
     }
     public override void OnStartClient()
@@ -130,51 +117,27 @@ public sealed class Player : NetworkBehaviour
 
         if (!IsOwner) return;
 
-        
         Instance = this;
 
         UIManager.Instance.Initialize();
 
-       
-       SetUsername();
-      
+
+        SetUsername();
         
-
         
-
-
-
+        
         //instances.Add(LocalConnection.ClientId, this);
     }
     public override void OnStopClient()
     {
         base.OnStopClient();
-        //instances.Remove(LocalConnection.ClientId, this);
     }
 
-    [ServerRpc]
-    public void CallToCheckToAssignGroups()
-    {
-        GameManager.Instance.CreateAndAssignGroups();
-    }
-
-    [ServerRpc]
-    public void CallToReadyCheck()
-    {
-        GameManager.Instance.ReadyCheck();
-
-    }
-    [ServerRpc]
-    public void CallToSetStatus(int status, bool hasVoted)
-    {
-        GameManager.Instance.SetPlayerStatus(status, hasVoted);
-    }
 
     [Server]
     public void StartGame()
     {
         if (!IsOwner) return;
-        
         Debug.Log("Starting Game" + this.Username);
 
         
@@ -193,8 +156,8 @@ public sealed class Player : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-          if (!IsOwner) return;
-        Debug.Log(IsClient);
+        if (!IsOwner) return;
+
 
         if (stopGame)
         {

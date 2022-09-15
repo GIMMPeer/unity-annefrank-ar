@@ -26,19 +26,13 @@ public class Round1EndView : View
     private Button continueButton;
 
     void OnEnable() {
-        toggleReadyButton.onClick.AddListener(() =>
-        {
-            Player.Instance.IsReady = !Player.Instance.IsReady;
-            Player.Instance.CallToReadyCheck();
-            }
-        
-        );
+        toggleReadyButton.onClick.AddListener(() => Player.Instance.IsReady = !Player.Instance.IsReady);
 
-       
-           
-       
+        if (InstanceFinder.IsServer) {
+            continueButton.onClick.AddListener(() => GameManager.Instance.ReadyCheck());
+        } else {
             continueButton.gameObject.SetActive(false);
-        
+        }
 
         for (int i = 0; i < GameManager.Instance.numGroups; i++) {
             groupScoreText[i].text = $"{i+1}: Group {GameManager.Instance.orderedGroups[i].groupNum}";
